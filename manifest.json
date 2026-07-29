@@ -1,0 +1,35 @@
+{
+  "name": "Govt Forms Portal",
+  "short_name": "FormsPortal",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f4f6f9",
+  "theme_color": "#1b5e20",
+  "icons": [
+    {
+      "src": "images/icon-192.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "images/icon-512.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "images/desktop-ss.png",
+      "sizes": "325x704",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Desktop View of Govt Forms Portal"
+    },
+    {
+      "src": "images/mobile-ss.png",
+      "sizes": "325x704",
+      "type": "image/png",
+      "label": "Mobile View of Govt Forms Portal"
+    }
+  ]
+}

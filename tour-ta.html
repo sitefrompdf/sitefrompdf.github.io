@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>TA FORM - यात्रा भत्ता बिल</title>
+
+  <!-- PWA Settings -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1b5e20">
+
+  <!-- Service Worker Register Script -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('Service Worker Registered!'))
+          .catch(err => console.log('Service Worker Registration Failed!', err));
+      });
+    }
+  </script>
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5314158636254894" crossorigin="anonymous"></script>
+
+  <!-- Google Analytics (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CH22M8QX1L"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CH22M8QX1L');
+  </script>
+  <style>
+    @page {
+      size: A4;
+      margin: 4mm;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+    .a4-page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 5mm;
+      margin: 5px auto;
+      box-sizing: border-box;
+      background-color: white;
+      border: 0px solid #ccc;
+      box-shadow: 0 0 05px rgba(0, 0, 0, 0.1);
+      position: relative;
+      height: auto;
+    }
+    .header-left { position: absolute; top: 6mm; left: 6mm; font-weight: normal; font-size: 16px; }
+    .sub-bill-left { position: absolute; top: 10mm; left: 6mm; font-weight: normal; font-size: 14px; }
+    .header-center { position: absolute; top: 6mm; left: 52%; transform: translateX(-50%); font-weight: normal; font-size: 16px; }
+    .header-right { position: absolute; top: 6mm; right: 6mm; font-weight: normal; font-size: 14px; }
+    
+    .positioned-line { border: none; border-top: 0.5px dotted black; height: 0; background-color: transparent; width: 100%; margin-top: 1px; margin-bottom: 20px; margin-left: auto; margin-right: 0; }
+    .dotted-line1 { border: none; border-top: 0.5px dotted black; height: 0; width: 390%; margin: 0px auto; margin-left: auto; margin-right: 0; }
+    
+    #customTable {
+      position: relative;
+      top: 105mm;
+      left: 0;
+      border-collapse: collapse;
+      width: 98%;
+      page-break-inside: auto;
+    }
+    
+    .action-buttons {
+      position: absolute; 
+      left: 2mm;
+      width: 100%; 
+      padding: 5px 0;
+      display: flex; 
+      flex-wrap: wrap;
+      justify-content: flex-start; 
+      align-items: center;
+    }
+    .action-buttons button {
+      margin-right: 10px; 
+      margin-bottom: 5px; 
+    }
+
+    [contenteditable]:empty::before { content: attr(data-placeholder); color: #999; font-style: italic; pointer-events: none; }
+    #customTable td { 
+      white-space: normal; 
+      word-wrap: break-word; 
+      word-break: break-all; 
+      overflow: hidden; 
+      height: auto; 
+      text-align: left; 
+      vertical-align: top; 
+      padding: 1px 2px; 
+      box-sizing: border-box; 
+      line-height: 1.1; 
+      border: 0.5px solid black !important; 
+      min-width: 60px; 
+    }
+    #customTable th { border: 0.5px solid black; font-size: 12px; }
+
+    /* Date-time picker cell */
+    .date-cell {
+      position: relative;
+      padding: 0 !important;
+      cursor: pointer;
+      text-align: center;
+    }
+    .dt-display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 1px;
+      min-height: 28px;
+      line-height: 1.2;
+      color: #222;
+      user-select: none;
+      pointer-events: none;
+    }
+    .dt-display.empty {
+      color: #aaa;
+      font-style: italic;
+      font-size: 10px;
+    }
+    .dt-date {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      width: 100%;
+      text-align: center;
+      border-bottom: 0.8px solid #555;
+      padding-bottom: 2px;
+      margin-bottom: 2px;
+    }
+    .dt-time {
+      display: block;
+      font-size: 11px;
+      width: 100%;
+      text-align: center;
+    }
+    .dt-display .cal-icon {
+      display: block;
+      font-size: 15px;
+      line-height: 1;
+      margin-bottom: 1px;
+    }
+    .dt-input {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: transparent;        /* text hidden, element still interactive */
+      caret-color: transparent;
+    }
+    /* Stretch the calendar icon to cover the entire cell — clicking anywhere opens picker */
+    .dt-input::-webkit-calendar-picker-indicator {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      margin: 0; padding: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    
+    #cell-4-1, #cell-4-3, #customTable tr td:nth-child(1), #customTable tr td:nth-child(3) { width: 78px; min-width: 80px; max-width: 80px; text-align: center; }
+    #cell-4-2, #cell-4-4, #customTable tr td:nth-child(2), #customTable tr td:nth-child(4) { width: 115px; min-width: 100px;}
+    #cell-4-5, #customTable tr td:nth-child(5) { width: 28px; min-width: 30px; text-align: center; }
+    #cell-4-6, #customTable tr td:nth-child(6) { width: 30px; min-width: 30px; text-align: center; } 
+    #cell-4-7, #customTable tr td:nth-child(8) { width: 25px; min-width: 25px; text-align: center; }
+    #cell-4-8, #customTable tr td:nth-child(9) { width: 25px; min-width: 25px; text-align: center; }
+    #cell-4-9 { width: 50px; min-width: 50px; vertical-align: top !important; 
+      writing-mode: vertical-rl; 
+      transform: rotate(180deg); 
+      text-align: left;
+      padding: 10px 5px;
+    }
+    #customTable tr[data-row-type="halt"] td[colspan="9"] { 
+      width: 712px;
+      min-width: 712px; 
+    }
+    #customTable tr {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+    #customTable {
+      border-collapse: collapse;
+      width: 100%;
+      page-break-inside: auto;
+    }
+    
+    .total-row td {
+      font-weight: bold;
+      background-color: transparent !important; 
+      border-bottom: 2px solid black !important; 
+    }
+    .total-row:last-child td {
+      border-bottom: 2px solid black !important;
+    }
+
+    /* ── Drafts Modal ── */
+    #draftsModal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55); z-index: 9999;
+      align-items: center; justify-content: center;
+    }
+    #draftsBox {
+      background: #fff; border-radius: 10px; padding: 20px 22px;
+      width: 360px; max-height: 80vh; overflow-y: auto;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+    }
+    #draftsBox h3 { margin: 0 0 14px; font-size: 15px; }
+    #draftsBox label { font-size: 12px; font-weight: bold; color: #333; }
+    .draft-save-row { display: flex; gap: 6px; margin-top: 5px; margin-bottom: 16px; }
+    .draft-save-row input {
+      flex: 1; padding: 5px 8px; border: 1px solid #ccc;
+      border-radius: 5px; font-size: 13px;
+    }
+    .draft-save-row button {
+      padding: 5px 11px; background: #4CAF50; color: #fff;
+      border: none; border-radius: 5px; cursor: pointer; font-size: 13px;
+    }
+    .draft-item {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 0; border-bottom: 1px solid #eee;
+    }
+    .draft-item-info { flex: 1; }
+    .draft-item-name { font-size: 13px; font-weight: bold; }
+    .draft-item-date { font-size: 11px; color: #888; }
+    .draft-btn-load {
+      padding: 3px 9px; font-size: 12px; background: #2196F3;
+      color: #fff; border: none; border-radius: 4px; cursor: pointer;
+    }
+    .draft-btn-del {
+      padding: 3px 8px; font-size: 12px; background: #f44336;
+      color: #fff; border: none; border-radius: 4px; cursor: pointer;
+    }
+    .draft-empty { font-size: 12px; color: #999; margin: 6px 0; }
+    #draftsCloseBtn {
+      margin-top: 14px; padding: 5px 16px; border: 1px solid #ccc;
+      background: #fff; border-radius: 5px; cursor: pointer; font-size: 13px;
+    }
+    /* Input highlight on validation fail */
+    .field-error { outline: 2px solid #e53935 !important; }
+    @media print { #draftsModal { display: none !important; } }
+
+    .a4-image-page {
+      width: 210mm;
+      height: 297mm;
+      margin: 0 auto;
+      background: white;
+      overflow: hidden;
+    }
+
+    .page-break {
+      display: block;
+      page-break-before: always;
+    }
+
+    /* Back button - hidden on print */
+    .back-btn {
+      display: block;
+      width: 210mm;
+      margin: 8px auto 0;
+      text-align: left;
+    }
+    .back-btn a {
+      display: inline-block;
+      padding: 6px 16px;
+      background: #003087;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+    }
+
+    @media print {
+      .back-btn { display: none !important; }
+      .a4-page {
+        page-break-after: always;
+      }
+      .a4-image-page {
+        page-break-before: always;
+        page-break-after: always;
+        width: 210mm !important;
+        height: 297mm !important;
+        margin: 0 !important;
+        background: white !important;
+      }
+      .action-buttons {
+        display: none !important;
+      }
+      footer {
+        display: none !important;
+      }
+      .dt-input { display: none !important; }
+      .dt-display { color: #000 !important; font-style: normal !important; }
+      .dt-display.empty { color: #000 !important; }
+      .dt-display .cal-icon { display: none !important; }
+      /* Repeat table headers on every printed page */
+      thead { display: table-header-group; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="back-btn">
+  <a href="index.html">&larr; होम पेज पर वापस जाएं</a>
+  </div>
+
+  <div id="instructionModal" style="
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background-color: rgba(0, 0, 0, 0.75); 
+    display: none; 
+    justify-content: center; 
+    align-items: center; 
+    z-index: 10000;
+    padding: 20px;
+  ">
+    <div style="
+      background: linear-gradient(135deg, #4caf50, #087f23);
+      padding: 40px 30px;
+      border-radius: 12px;
+      max-width: 480px;
+      width: 90%;
+      color: white;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: left;
+    ">
+      <h2 style="
+        margin-top: 0; 
+        font-size: 28px; 
+        font-weight: 700; 
+        text-align: center;
+        text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+      ">फार्म भरने के निर्देश (Instructions)</h2>
+      <p style="font-size: 18px; line-height: 1.5; margin-bottom: 20px;">
+        यह यात्रा भत्ता बिल (TA Bill) फॉर्म एक इंटरैक्टिव टूल है। कृपया ध्यान दें :
+      </p>
+      <ul style="font-size: 16px; line-height: 1.6; padding-left: 25px; margin-bottom: 25px;">
+        <li>सभी संबंधित फ़ील्ड्स (जैसे नाम, वेतन, पद, तिथि और समय) सावधानी से भरें।</li>
+        <li>यात्रा विवरण तालिका में तारीख और समय <strong>DD.MM.YY HH:MM</strong> फॉर्मेट में भरें।</li>
+        <li>राशि (Amount) कॉलम में केवल संख्या और दशमलव अंक दर्ज करें।</li>
+        <li>नया यात्रा विवरण या विश्राम विवरण जोड़ने के लिए नीचे दिए गए <strong>बटन</strong> का उपयोग करें।</li>
+        <li>सभी विवरण सही भरने के बाद <strong>'PDF डाउनलोड करें'</strong> बटन पर क्लिक करें।</li>
+      </ul>
+      <div style="text-align: center;">
+        <button id="closeModalButton" style="
+          padding: 14px 36px; 
+          background-color: #ffd600;
+          color: #222;
+          font-size: 18px; 
+          font-weight: 600;
+          border: none; 
+          border-radius: 8px;
+          cursor: pointer;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+          transition: background-color 0.3s ease;
+        " 
+        onmouseover="this.style.backgroundColor='#ffea00'"
+        onmouseout="this.style.backgroundColor='#ffd600'">समझ गया / OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="a4-page" id="a4Page">
+
+    <div class="header-left">उप बिल संख्या...</div>
+    <div class="sub-bill-left">Sub Bill No....</div>
+    <div style="position: absolute; top: 10mm; right: 6mm; font-weight: normal; font-size: 14px;">I.T.B.P.F Accts 001</div>
+
+    <div class="header-center">
+      AC/NO - <input type="number" maxlength="15" pattern="d{0,15}" title="..." inputmode="numeric" style="width: 180px; height: 18px; padding: 2px 5px; font-size: 14px; border: none; outline: none;" placeholder="खाता संख्या (Account No.)" />
+    </div>
+
+    <div style="position: absolute; top: 11mm; left: 50%; transform: translateX(-50%); font-weight: normal; font-size: 16px;">
+      IFSC CODE - <input type="text" maxlength="15" pattern="[A-Z0-9]{0,15}" title="..." style="width: 150px; height: 18px; padding: 2px 5px; font-size: 14px; border: none; outline: none; text-transform: uppercase;" placeholder="बैंक का IFSC कोड" />
+    </div>
+
+    <div style="position: absolute; top: 16mm; left: 50%; transform: translateX(-50%); font-weight: normal; font-size: 16px;">
+      VENDOR ID - <input type="text" maxlength="15" pattern="[A-Z0-9]{0,15}" title="..." style="width: 165px; height: 18px; padding: 2px 5px; font-size: 14px; border: none; outline: none; text-transform: uppercase;" placeholder="वेंडर आई.डी. (Vendor ID)" />
+    </div>
+
+    <div style="position: absolute; top: 23mm; left: 50%; transform: translateX(-50%); text-align: center; font-weight: bold;">
+      <div style="font-size: 22px;">दौरे के लिये यात्रा भत्ता बिल</div>
+      <div style="font-size: 18px; margin-top: 1px;">TRAVELLING ALLOWANCE BILL FOR TOUR</div>
+    </div>
+
+    <div class="header-right">भा.ति.सी.पु.बल.लेखा001</div>
+
+    <div style="position: absolute; top: 37mm; left: 6mm; font-weight: normal; font-size: 14px; line-height: 1.4;">
+      टिप्पणी- इस बिल की दो प्रतियों में, एक संदाय के लिये और दूसरी कार्यालय प्रति के रूप में तैयार किया जाना चाहिये |<br />
+      Note- This bill should be prepared in duplicate, one for payment and the other as office copy.
+    </div>
+
+    <div style="position: absolute; top: 47mm; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 16px; text-align: center;">
+      भाग-क (सरकारी सेवक द्वारा भरा जाना है)<br />
+      PART-A (To be filled up by Government Servant)
+    </div>
+    
+    <div style="position: absolute; top: 60mm; left: 6mm; width: 88%; font-size: 16px;">
+      
+      <div style="position: absolute; top: 2mm; left: 0mm;line-height:0.8;">
+        1.&nbsp;नाम<br>
+        NAME -
+        <input type="text" maxlength="30" style="width: 300px; height: 18px; padding: 2px 5px; font-size: 16px; border: none;font-weight: normal; outline: none; text-transform: uppercase;" placeholder="पूरा नाम (Full Name)" />
+      </div>
+      
+      <div style="position: absolute; top: 1mm; left: 400px;line-height:0.8;">
+        2.दल संख्या<br />
+        Regimental No -
+        <input type="text" maxlength="9" class="regimental-no" inputmode="numeric" style="width: 120px; font-weight: bold; height: 18px; padding: 2px 5px; font-size: 16px; border: none; outline: none; text-align: left;" oninput="this.value=this.value.replace(/[^0-9]/g,'');" placeholder="(e.g.123456789)" />
+      </div>
+      
+    </div>
+
+    <div style="position: absolute; top: 71mm; left: 6mm; width: 88%; font-size: 14px;">
+        
+      <div style="position: absolute; top: 0mm; left: 0mm;line-height:0.8;">
+        3.&nbsp; पद<br />Designation -
+        <input type="text" maxlength="9" style="width: 120px; height: 18px; padding: 2px 5px; font-size: 16px; border: none; outline: none; text-transform: uppercase;" placeholder="पद Rank/Post" />
+      </div>
+      <div style="position: absolute; top: 1mm;line-height:0.9; left: 80mm;">
+        कंपनी<br>COY -
+        <input type="text" maxlength="10" inputmode="text" style="width: 116px; height: 18px; padding: 2px 5px; font-size: 18px; border: none; outline: none; text-transform: uppercase;" placeholder="ADM" />
+      </div>
+      <div style="position: absolute; top: 11mm; left: 0mm;line-height:0.8;">
+        4.&nbsp;वेतन<br />&nbsp;&nbsp;&nbsp;PAY -
+        <input type="number" maxlength="10" inputmode="numeric" pattern="[0-9]*" style="width: 110px; height: 18px; padding: 2px 5px; font-size: 16px; border: none; outline: none; text-transform: uppercase;" placeholder="₹ 00000" />
+      </div>
+
+      <div style="position: absolute; top: 11mm;line-height:0.9; left: 50mm;">
+        लेवल<br />LEVEL -
+        <input type="number" maxlength="2" inputmode="numeric" style="width: 60px; height: 18px; padding: 2px 5px; font-size: 18px; border: none; outline: none; text-transform: uppercase;" placeholder="01-18" />
+      </div>
+      
+      <div style="position: absolute; top: 20mm; left: 0mm; width: 750px; font-weight: normal; font-size: 58px; display: flex; align-items: center;">
+        <label for="headquarters" style="margin-right: 10px; font-size: 14px;">
+          5.मुख्यालय/Headquarters</label>
+        <input type="text" id="headquarters" maxlength="60" style="flex-grow: 1; height:20px; padding: 2px 5px; font-size: 16px; border: 0.5px solid #000; outline: none; text-transform: uppercase;" title="कृपया 60 अक्षरों तक दर्ज करें" placeholder="वर्तमान मुख्यालय का नाम" />
+      </div>
+
+      <div style="position: absolute; top: 25mm; left: 0mm; width: 750px; font-weight: normal; font-size: 12px; display: flex; align-items: center;">
+        <label for="info" style="margin-right: 5px;">
+          <p style="font-size: 10px; margin: 0 0 5px 0;">की गई यात्रा/यात्राओं के व्यौरे और प्रयोजन:<br>Details and purpose of journey(s) performed.</p>
+        </label>
+        <input type="text" id="info" maxlength="50" style="width: 100%; height: 25px; padding: 2px 5px; font-size: 18px; border: 0.5px solid #000; outline: none; box-sizing: border-box; text-transform: uppercase; text-align: left;" placeholder="उद्देश्य और गंतव्य ( Purpose & Destination)" />
+      </div>
+    </div>
+
+    <table id="customTable">
+      <thead>
+        <tr>
+          <th id="cell-1-1" colspan="2" style="border: 0.5px solid black;font-size: 12px;">प्रस्थान<br>Departure</th>
+          <th id="cell-1-3" colspan="2" style="border: 0.5px solid black;font-size: 12px;">आगमन<br> Arrival</th>
+          <th id="cell-1-4" rowspan="3" style="border: 0.5px solid black;text-align: center;font-size: 12px;"> यात्रा की एवं<br> स्थान सुब्धा का वर्ग<br> Mode of travel <br>and class of <br>accommodation</th>
+          <th id="cell-1-5" colspan="2" rowspan="2" style="border: 0.5px solid black;text-align: center; vertical-align: middle;font-size: 12px;">सदत्त यात्री भाड़ा <br>Fare Paid</th>
+          <th id="cell-1-6" rowspan="3" style="border: 0.5px solid black;font-size: 12px;">सड़क मील<br>भत्ता के लिए<br>दूरी कि. मी. में <br>Distance in 
+            Kms.<br>for road mileage </th>
+          <th id="cell-1-7" colspan="2" rowspan="3" style="border: 0.5px solid black;font-size: 12px;">विश्राम की अवधि<br>Duration of Halt </th>
+          <th id="cell-1-8" rowspan="3" style="border: 0.5px solid black; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 12px; text-align: center;">
+            यात्रा का प्रयोजन<br>Purpose of journey.
+          </th>
+        </tr>
+        <tr>
+          <th id="cell-2-1" rowspan="2" style="border: 0.5px solid black;text-align: center; vertical-align: middle;font-size: 12px;"> &nbsp; तारीख और <br>समय Date <br>And Time &nbsp;</th>
+          <th id="cell-2-2" rowspan="2" style="border: 0.5px solid black;font-size: 12px;"> कहा से/Where From</th>
+          <th id="cell-2-3" rowspan="2" style="border: 0.5px solid black;font-size: 12px;">तारीख और <br>समय Date <br>And Time</th>
+          <th id="cell-2-4" rowspan="2" style="border: 0.5px solid black;font-size: 12px;">कहा तक /FROM To </th>
+        </tr>
+        <tr>
+          <th id="cell-3-1" style="border: 0.5px solid black;font-size: 12px;">Rs.</th>
+          <th id="cell-3-2" style="border: 0.5px solid black;font-size: 12px;">p.</th>
+        </tr>
+      </thead>
+
+      <tbody id="tableBody">
+        <tr id="initial-travel-row" data-row-type="travel">
+          <td id="cell-4-1" class="date-cell">
+            <span class="dt-display empty"><span class="cal-icon">📅</span>तारीख/समय</span>
+            <input type="datetime-local" class="dt-input" title="प्रस्थान तारीख और समय चुनें">
+          </td>
+          <td id="cell-4-2" contenteditable="true" data-placeholder="स्थान (From)"></td>
+          <td id="cell-4-3" class="date-cell">
+            <span class="dt-display empty"><span class="cal-icon">📅</span>तारीख/समय</span>
+            <input type="datetime-local" class="dt-input" title="आगमन तारीख और समय चुनें">
+          </td>
+          <td id="cell-4-4" contenteditable="true" data-placeholder="स्थान (To)"></td>
+          <td id="cell-4-5" contenteditable="true" data-placeholder="Mode/Class"></td>
+          <td id="cell-4-6" contenteditable="true" colspan="2" data-placeholder="₹"></td>
+          <td id="cell-4-7" contenteditable="true" data-placeholder="km"></td>
+          <td id="cell-4-8" contenteditable="true" colspan="2" data-placeholder="Halt"></td>
+          <td id="cell-4-9" contenteditable="true" rowspan="500"
+            style="vertical-align: top;">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="action-buttons" id="actionButtons" style="top: 105mm;"> 
+      <button id="addTravelRow" style="font-size: 13px; padding: 4px 9px; cursor: pointer;">➕ यात्रा विवरण</button>
+      <button id="addMergedRow" style="font-size: 13px; padding: 4px 9px; cursor: pointer;">➕ विश्राम/हॉल्ट</button>
+      <button id="addTotalRow" style="font-size: 13px; padding: 4px 9px; cursor: pointer; background-color: #3f51b5; color: white; border: none;">कुल योग जोड़ें</button>
+      <button id="deleteLastRow" style="font-size: 13px; padding: 4px 9px; cursor: pointer; background-color: #f44336; color: white; border: none;">🗑 आखिरी रो</button>
+      <button id="clearForm" style="font-size: 13px; padding: 4px 9px; cursor: pointer; background-color: #ff6f00; color: white; border: none;">✖ फॉर्म साफ करें</button>
+      <button id="openDraftsModal" style="font-size: 13px; padding: 4px 9px; cursor: pointer; background-color: #795548; color: white; border: none;">💾 ड्राफ्ट</button>
+      <button id="downloadPdf" style="font-size: 13px; padding: 4px 9px; cursor: pointer; background-color: #4CAF50; color: white; border: none;">⬇️ PDF डाउनलोड</button>
+      <span id="saveStatus" style="font-size: 11px; color: #555; margin-left: 6px; font-style: italic;"></span>
+    </div>
+  </div>
+
+  <div class="a4-image-page">
+    <img src="images/img1.jpeg" style="width: 210mm; height: 297mm; object-fit: cover; display: block;" alt="Image 1" />
+  </div>
+
+  <div class="a4-image-page">
+    <img src="images/img2.jpeg" style="width: 210mm; height: 297mm; object-fit: cover; display: block;" alt="Image 2" />
+  </div>
+
+  <div class="a4-image-page">
+    <img src="images/img3.jpg" style="width: 210mm; height: 297mm; object-fit: cover; display: block;" alt="Image 3" />
+  </div>
+
+<!-- ── Drafts Modal ── -->
+<div id="draftsModal">
+  <div id="draftsBox">
+    <h3>💾 ड्राफ्ट प्रबंधन</h3>
+
+    <label>इस नाम से सहेजें:</label>
+    <div class="draft-save-row">
+      <input id="draftNameInput" type="text" placeholder="जैसे: अप्रैल यात्रा, दिल्ली दौरा…" maxlength="50">
+      <button id="saveDraftBtn">सहेजें</button>
+    </div>
+
+    <label>सहेजे गए ड्राफ्ट:</label>
+    <div id="draftsList"></div>
+
+    <button id="draftsCloseBtn">बंद करें</button>
+  </div>
+</div>
+
+<script>
+  // ─── Constants ───────────────────────────────────────────────────
+  const SAVE_KEY      = 'ta-bill-draft';
+  const RECENT_KEY    = 'ta-bill-recent';
+  const DRAFTS_PREFIX = 'ta-bill-draft::';
+  const MM_TO_PX      = 3.779527559;
+
+  const table         = document.getElementById('customTable');
+  const tableBody     = document.getElementById('tableBody');
+  const actionButtons = document.getElementById('actionButtons');
+  const a4Page        = document.getElementById('a4Page');
+  const saveStatus    = document.getElementById('saveStatus');
+
+  // ─── Row Templates ───────────────────────────────────────────────
+  const DATE_CELL_HTML = (title) =>
+    `<td class="date-cell">` +
+      `<span class="dt-display empty"><span class="cal-icon">📅</span>तारीख/समय</span>` +
+      `<input type="datetime-local" class="dt-input" title="${title}">` +
+    `</td>`;
+
+  const travelRowHTML = () =>
+    `<tr data-deletable="true" data-row-type="travel">` +
+      DATE_CELL_HTML('प्रस्थान तारीख और समय') +
+      `<td contenteditable="true" data-placeholder="स्थान (From)"></td>` +
+      DATE_CELL_HTML('आगमन तारीख और समय') +
+      `<td contenteditable="true" data-placeholder="स्थान (To)"></td>` +
+      `<td contenteditable="true" data-placeholder="Mode/Class"></td>` +
+      `<td contenteditable="true" colspan="2" data-placeholder="₹"></td>` +
+      `<td contenteditable="true" data-placeholder="km"></td>` +
+      `<td contenteditable="true" colspan="2" data-placeholder="Halt"></td>` +
+    `</tr>`;
+
+  const mergedRowHTML =
+    `<tr data-deletable="true" data-row-type="halt">` +
+      `<td colspan="9" contenteditable="true" ` +
+        `style="border:0.5px solid black;text-align:left;vertical-align:top;padding:2px;height:22px;" ` +
+        `data-placeholder="विश्राम का स्थान और अवधि / Place and Duration of Halt">` +
+      `</td>` +
+    `</tr>`;
+
+  const totalRowHTML = (amt) =>
+    `<tr data-row-type="total" class="total-row">` +
+      `<td colspan="5" style="text-align:right;border-right:none!important;font-weight:bold;">कुल योग / Total</td>` +
+      `<td colspan="2" id="liveTotal" style="text-align:center;border-left:none!important;font-weight:bold;">₹ ${amt.toFixed(2)}</td>` +
+      `<td colspan="4" style="text-align:center;"></td>` +
+    `</tr>`;
+
+  // ─── Layout ──────────────────────────────────────────────────────
+  function updateLayout() {
+    const newTop = table.offsetTop + table.offsetHeight + 10;
+    actionButtons.style.top = `${newTop}px`;
+    const needed = newTop + actionButtons.offsetHeight + 20;
+    a4Page.style.minHeight = `${Math.max(needed, 297 * MM_TO_PX)}px`;
+  }
+
+  // ─── Date-Time Picker ────────────────────────────────────────────
+  function formatDT(isoVal) {
+    const d = new Date(isoVal);
+    if (isNaN(d.getTime())) return null;
+    return {
+      date: ("0"+d.getDate()).slice(-2)+"."+("0"+(d.getMonth()+1)).slice(-2)+"."+d.getFullYear().toString().slice(-2),
+      time: ("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)
+    };
+  }
+
+  // Local ISO string for datetime-local min/max (YYYY-MM-DDTHH:MM)
+  function localISOString(d) {
+    const p = n => String(n).padStart(2,'0');
+    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+  }
+
+  // Set min (1 year back) and max (now) on all datetime-local inputs
+  function setDateLimits() {
+    const now        = new Date();
+    const oneYearAgo = new Date(now.getTime() - 365*24*60*60*1000);
+    const maxStr = localISOString(now);
+    const minStr = localISOString(oneYearAgo);
+    table.querySelectorAll('.dt-input').forEach(inp => { inp.min = minStr; inp.max = maxStr; });
+  }
+
+  // ── Desktop date-picker fix: programmatically open picker on cell click ──
+  table.addEventListener('click', function(e) {
+    const cell = e.target.closest('.date-cell');
+    if (!cell) return;
+    const inp = cell.querySelector('.dt-input');
+    if (!inp) return;
+    try { inp.showPicker(); } catch(err) { inp.click(); }
+  });
+
+  table.addEventListener('change', function(e) {
+    if (!e.target.classList.contains('dt-input') || !e.target.value) return;
+    const disp  = e.target.previousElementSibling;
+    const parts = formatDT(e.target.value);
+    if (parts && disp) {
+      disp.innerHTML = `<span class="dt-date">${parts.date}</span><span class="dt-time">${parts.time}</span>`;
+      disp.classList.remove('empty');
+    }
+
+    // ── Arrival cannot be before Departure in same travel row ──
+    const row = e.target.closest('tr[data-row-type="travel"]');
+    if (row) {
+      const dtInputs = Array.from(row.querySelectorAll('.dt-input'));
+      const dep = dtInputs[0], arr = dtInputs[1];
+      if (dep && arr && dep.value && arr.value && arr.value < dep.value) {
+        const arrDisp = arr.previousElementSibling;
+        alert('⚠️ आगमन समय, प्रस्थान से पहले नहीं हो सकता!\nकृपया सही तारीख/समय चुनें।');
+        arr.value = '';
+        if (arrDisp) { arrDisp.innerHTML = '<span class="cal-icon">📅</span>तारीख/समय'; arrDisp.classList.add('empty'); }
+        return;
+      }
+    }
+
+    debouncedSave();
+  });
+
+  // ─── Total Calculation ───────────────────────────────────────────
+  function calculateTotal() {
+    let total = 0;
+    table.querySelectorAll('tr[data-row-type="travel"]').forEach(row => {
+      const cell = row.cells[5];
+      if (cell) total += parseFloat(cell.textContent.replace(/[^0-9.]/g,'')) || 0;
+    });
+    return total;
+  }
+
+  function updateLiveTotal() {
+    const liveEl = document.getElementById('liveTotal');
+    if (liveEl) liveEl.textContent = '₹ ' + calculateTotal().toFixed(2);
+  }
+
+  // ─── Number Input Restriction ────────────────────────────────────
+  function restrictNumberInput(cell) {
+    if (cell.__numRestricted) return;
+    cell.__numRestricted = true;
+    cell.addEventListener('keydown', function(e) {
+      const allowed = [8,9,37,38,39,40,46,110,190];
+      if ((e.keyCode>=48&&e.keyCode<=57)||(e.keyCode>=96&&e.keyCode<=105)||allowed.includes(e.keyCode)) return;
+      e.preventDefault();
+    });
+    cell.addEventListener('input', function() {
+      let t = this.textContent.replace(/[^0-9.]/g,'');
+      const p = t.split('.');
+      if (p.length > 2) t = p[0]+'.'+p.slice(1).join('');
+      if (this.textContent !== t) {
+        this.textContent = t;
+        const sel = window.getSelection(), r = document.createRange();
+        if (this.firstChild) { r.setStart(this.firstChild,t.length); r.collapse(true); sel.removeAllRanges(); sel.addRange(r); }
+      }
+      updateLiveTotal();
+      debouncedSave();
+    });
+  }
+
+  // ─── Tab Navigation ──────────────────────────────────────────────
+  document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Tab') return;
+    const active = document.activeElement;
+    if (!active || !active.isContentEditable) return;
+    e.preventDefault();
+    const all = Array.from(table.querySelectorAll('[contenteditable="true"]'));
+    const idx = all.indexOf(active);
+    if (idx === -1) return;
+    const next = e.shiftKey ? all[idx-1] : all[idx+1];
+    if (next) {
+      next.focus();
+      const r = document.createRange(), s = window.getSelection();
+      r.selectNodeContents(next); r.collapse(false);
+      s.removeAllRanges(); s.addRange(r);
+    }
+  });
+
+  // ─── Auto-Save (localStorage) ────────────────────────────────────
+  let saveTimer;
+  function debouncedSave() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveFormData, 900);
+  }
+
+  function saveFormData() {
+    try {
+      const state = { tableBodyHTML: tableBody.innerHTML, inputs: {} };
+      document.querySelectorAll('.a4-page input:not(.dt-input)').forEach(inp => {
+        const k = inp.placeholder || inp.title || inp.id;
+        if (k) state.inputs[k] = inp.value;
+      });
+      localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+
+      // Recent metadata for homepage
+      const nameEl  = document.querySelector('input[placeholder="पूरा नाम (Full Name)"]');
+      const regEl   = document.querySelector('.regimental-no');
+      localStorage.setItem(RECENT_KEY, JSON.stringify({
+        lastSaved : Date.now(),
+        form      : 'ta-bill',
+        path      : '/ta-bill.html',
+        title     : 'यात्रा भत्ता बिल (TA Bill)',
+        name      : nameEl ? nameEl.value.trim() : '',
+        regNo     : regEl  ? regEl.value.trim()  : ''
+      }));
+
+      if (saveStatus) {
+        const t = new Date();
+        saveStatus.textContent = `✔ ${("0"+t.getHours()).slice(-2)}:${("0"+t.getMinutes()).slice(-2)} पर सहेजा`;
+      }
+    } catch(err) { console.error('Save failed', err); }
+  }
+
+  function loadFormData() {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    try {
+      const state = JSON.parse(raw);
+      if (state.tableBodyHTML) {
+        tableBody.innerHTML = state.tableBodyHTML;
+        tableBody.querySelectorAll('td[data-placeholder="₹"]').forEach(restrictNumberInput);
+      }
+      if (state.inputs) {
+        document.querySelectorAll('.a4-page input:not(.dt-input)').forEach(inp => {
+          const k = inp.placeholder || inp.title || inp.id;
+          if (k && state.inputs[k] != null) inp.value = state.inputs[k];
+        });
+      }
+      updateLayout();
+      if (saveStatus) saveStatus.textContent = '📂 पिछला डेटा लोड किया';
+    } catch(err) { console.error('Load failed', err); }
+  }
+
+  // Save on any content change
+  document.addEventListener('input', function(e) {
+    if (e.target.closest('.a4-page')) debouncedSave();
+  });
+
+  // ─── Add Travel Row (with Auto-From) ─────────────────────────────
+  document.getElementById('addTravelRow').addEventListener('click', function() {
+    // Capture last "To" value before inserting
+    const travelRows = table.querySelectorAll('tr[data-row-type="travel"]');
+    let lastTo = '';
+    if (travelRows.length > 0) {
+      const lastRow = travelRows[travelRows.length - 1];
+      const toCell  = lastRow.cells[3];
+      lastTo = toCell ? toCell.textContent.trim() : '';
+    }
+
+    const tmp = document.createElement('tbody');
+    tmp.innerHTML = travelRowHTML();
+    const newTr = tmp.firstElementChild;
+    tableBody.appendChild(newTr);
+
+    // Auto-fill From
+    if (lastTo) {
+      const addedRows = tableBody.querySelectorAll('tr[data-row-type="travel"]');
+      const added = addedRows[addedRows.length - 1];
+      if (added && added.cells[1]) added.cells[1].textContent = lastTo;
+    }
+
+    const fareCell = newTr.querySelector('td[data-placeholder="₹"]');
+    if (fareCell) restrictNumberInput(fareCell);
+    setDateLimits();
+
+    // If total row exists, move it to bottom
+    const existingTotal = tableBody.querySelector('tr[data-row-type="total"]');
+    if (existingTotal) tableBody.appendChild(existingTotal);
+
+    updateLayout();
+    debouncedSave();
+    // Scroll new row into view
+    newTr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  // ─── Add Halt Row ────────────────────────────────────────────────
+  document.getElementById('addMergedRow').addEventListener('click', function() {
+    const tmp = document.createElement('tbody');
+    tmp.innerHTML = mergedRowHTML;
+    tableBody.appendChild(tmp.firstElementChild);
+
+    // If total row exists, move it to bottom
+    const existingTotal = tableBody.querySelector('tr[data-row-type="total"]');
+    if (existingTotal) tableBody.appendChild(existingTotal);
+
+    updateLayout();
+    debouncedSave();
+  });
+
+  // ─── Add / Refresh Total Row ─────────────────────────────────────
+  document.getElementById('addTotalRow').addEventListener('click', function() {
+    const existing = tableBody.querySelector('tr[data-row-type="total"]');
+    if (existing) existing.remove();
+    const tmp = document.createElement('tbody');
+    tmp.innerHTML = totalRowHTML(calculateTotal());
+    tableBody.appendChild(tmp.firstElementChild);
+    updateLayout();
+    debouncedSave();
+  });
+
+  // ─── Delete Last Row ─────────────────────────────────────────────
+  document.getElementById('deleteLastRow').addEventListener('click', function() {
+    const rows = tableBody.rows;
+    const last = rows[rows.length - 1];
+    const isFixed = !last || (!last.dataset.deletable && last.dataset.rowType !== 'total');
+    if (isFixed) { alert('शुरुआती यात्रा विवरण रो को हटाया नहीं जा सकता।'); return; }
+    last.remove();
+    updateLayout();
+    updateLiveTotal();
+    debouncedSave();
+  });
+
+  // ─── Clear Form ──────────────────────────────────────────────────
+  document.getElementById('clearForm').addEventListener('click', function() {
+    if (!confirm('क्या आप सभी डेटा साफ करना चाहते हैं?\nयह कार्य पूर्ववत नहीं किया जा सकता।')) return;
+
+    // Remove all added rows
+    table.querySelectorAll('tr[data-deletable="true"], tr[data-row-type="total"]').forEach(r => r.remove());
+
+    // Reset initial row date cells
+    table.querySelectorAll('.dt-input').forEach(inp => inp.value = '');
+    table.querySelectorAll('.dt-display').forEach(disp => {
+      disp.innerHTML = '<span class="cal-icon">📅</span>तारीख/समय';
+      disp.classList.add('empty');
+    });
+
+    // Clear contenteditable cells
+    table.querySelectorAll('[contenteditable]').forEach(el => el.innerHTML = '');
+
+    // Clear top inputs
+    document.querySelectorAll('.a4-page input:not(.dt-input)').forEach(inp => inp.value = '');
+
+    localStorage.removeItem(SAVE_KEY);
+    localStorage.removeItem(RECENT_KEY);
+    if (saveStatus) saveStatus.textContent = '🗑 फॉर्म साफ हुआ';
+
+    updateLayout();
+  });
+
+  // ─── PDF Download (with validation) ─────────────────────────────
+  document.getElementById('downloadPdf').addEventListener('click', function() {
+    const nameEl = document.querySelector('input[placeholder="पूरा नाम (Full Name)"]');
+    const regEl  = document.querySelector('.regimental-no');
+    const missing = [];
+    if (nameEl) nameEl.classList.remove('field-error');
+    if (regEl)  regEl.classList.remove('field-error');
+
+    if (!nameEl || !nameEl.value.trim()) {
+      missing.push('नाम (Name)');
+      if (nameEl) nameEl.classList.add('field-error');
+    }
+    if (!regEl || !regEl.value.trim()) {
+      missing.push('रजि. नं. (Reg No.)');
+      if (regEl) regEl.classList.add('field-error');
+    }
+    if (missing.length) {
+      alert('⚠️ PDF डाउनलोड से पहले ये फील्ड भरें:\n• ' + missing.join('\n• '));
+      if (nameEl && !nameEl.value.trim()) nameEl.focus();
+      return;
+    }
+    saveFormData();
+    window.print();
+  });
+
+  // ─── Draft Management ────────────────────────────────────────────
+  function listDrafts() {
+    const drafts = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith(DRAFTS_PREFIX)) {
+        try {
+          const d = JSON.parse(localStorage.getItem(key));
+          drafts.push({ key, name: key.slice(DRAFTS_PREFIX.length), savedAt: d.savedAt || 0 });
+        } catch(e) {}
+      }
+    }
+    return drafts.sort((a,b) => b.savedAt - a.savedAt);
+  }
+
+  function saveDraftAs(name) {
+    if (!name.trim()) { alert('ड्राफ्ट का नाम लिखें।'); return false; }
+    saveFormData();
+    try {
+      const state = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
+      state.savedAt   = Date.now();
+      state.draftName = name.trim();
+      localStorage.setItem(DRAFTS_PREFIX + name.trim(), JSON.stringify(state));
+      if (saveStatus) saveStatus.textContent = `✔ "${name.trim()}" सहेजा`;
+      return true;
+    } catch(e) { alert('सहेजा नहीं जा सका।'); return false; }
+  }
+
+  function loadDraft(key) {
+    const raw = localStorage.getItem(key);
+    if (!raw) return;
+    try {
+      const state = JSON.parse(raw);
+      if (state.tableBodyHTML) {
+        tableBody.innerHTML = state.tableBodyHTML;
+        tableBody.querySelectorAll('td[data-placeholder="₹"]').forEach(restrictNumberInput);
+      }
+      if (state.inputs) {
+        document.querySelectorAll('.a4-page input:not(.dt-input)').forEach(inp => {
+          const k = inp.placeholder || inp.title || inp.id;
+          if (k && state.inputs[k] != null) inp.value = state.inputs[k];
+        });
+      }
+      localStorage.setItem(SAVE_KEY, raw);
+      updateLayout(); setDateLimits(); updateLiveTotal();
+      if (saveStatus) saveStatus.textContent = `📂 "${state.draftName || key.slice(DRAFTS_PREFIX.length)}" लोड किया`;
+    } catch(e) { alert('ड्राफ्ट लोड नहीं हो सका।'); }
+  }
+
+  function renderDraftsList() {
+    const drafts  = listDrafts();
+    const container = document.getElementById('draftsList');
+    if (!drafts.length) {
+      container.innerHTML = '<p class="draft-empty">कोई ड्राफ्ट नहीं सहेजा गया।</p>';
+      return;
+    }
+    container.innerHTML = drafts.map(d => {
+      const dt = d.savedAt
+        ? new Date(d.savedAt).toLocaleString('hi-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' })
+        : '';
+      return `<div class="draft-item">
+        <div class="draft-item-info">
+          <div class="draft-item-name">${d.name}</div>
+          <div class="draft-item-date">${dt}</div>
+        </div>
+        <button class="draft-btn-load" onclick="window._loadDraft('${d.key}')">लोड</button>
+        <button class="draft-btn-del"  onclick="window._delDraft('${d.key}','${d.name}')">🗑</button>
+      </div>`;
+    }).join('');
+  }
+
+  // Expose helpers for inline onclick handlers
+  window._loadDraft = function(key) {
+    loadDraft(key);
+    document.getElementById('draftsModal').style.display = 'none';
+  };
+  window._delDraft = function(key, name) {
+    if (!confirm(`"${name}" हटाएं?`)) return;
+    localStorage.removeItem(key);
+    renderDraftsList();
+  };
+
+  document.getElementById('openDraftsModal').addEventListener('click', function() {
+    document.getElementById('draftNameInput').value = '';
+    renderDraftsList();
+    document.getElementById('draftsModal').style.display = 'flex';
+  });
+  document.getElementById('draftsCloseBtn').addEventListener('click', function() {
+    document.getElementById('draftsModal').style.display = 'none';
+  });
+  document.getElementById('saveDraftBtn').addEventListener('click', function() {
+    const name = document.getElementById('draftNameInput').value.trim();
+    if (saveDraftAs(name)) {
+      renderDraftsList();
+      document.getElementById('draftNameInput').value = '';
+    }
+  });
+
+  // ─── Level Clamp ─────────────────────────────────────────────────
+  document.querySelector('input[placeholder="01-18"]').addEventListener('input', function() {
+    let v = parseInt(this.value);
+    if (v > 18) this.value = 18;
+    else if (v < 1) this.value = 1;
+  });
+
+  // ─── Init ────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function() {
+    const modal       = document.getElementById('instructionModal');
+    const closeButton = document.getElementById('closeModalButton');
+    modal.style.display = 'flex';
+
+    closeButton.addEventListener('click', function() {
+      modal.style.display = 'none';
+      loadFormData(); // restore after modal closes
+      updateLayout();
+      setDateLimits();
+      window.addEventListener('resize', updateLayout);
+    });
+
+    // Attach number restriction and date limits to initial row
+    tableBody.querySelectorAll('td[data-placeholder="₹"]').forEach(restrictNumberInput);
+    setDateLimits();
+  });
+</script>
+
+</body>
+</html>
