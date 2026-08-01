@@ -3,33 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=850">
-    <title>CEA Form</title>
-      <!-- PWA Settings -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#1b5e20">
+    <title>CEA Form - Children Education Allowance</title>
+    
+    <!-- PWA Settings -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1b5e20">
 
-  <!-- Service Worker Register Script -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-          .then(reg => console.log('Service Worker Registered!'))
-          .catch(err => console.log('Service Worker Registration Failed!', err));
-      });
-    }
-  </script>
+    <!-- Service Worker Register Script -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('Service Worker Registered!'))
+            .catch(err => console.log('Service Worker Registration Failed!', err));
+        });
+      }
+    </script>
 
-  <!-- Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5314158636254894" crossorigin="anonymous"></script>
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5314158636254894" crossorigin="anonymous"></script>
 
-  <!-- Google Analytics (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CH22M8QX1L"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-CH22M8QX1L');
-  </script>
+    <!-- Google Analytics (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CH22M8QX1L"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CH22M8QX1L');
+    </script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -182,12 +184,12 @@
 
     <!-- ================= PAGE 1: SCHOOL CERTIFICATE ================= -->
     <div class="a4-page" id="page1">
-        
+
         <!-- Authority Section -->
         <div class="authority-section">
             Authority vide Government of India<br>
             Ministry of Personnel, P.G. and Pensions Department of Personnel & Training New Delhi,<br>
-            Order No. No. A-27012/02/2017-Estt. (AL) 16 August, 2017.<br>
+            Order No. A-27012/02/2017-Estt. (AL) dated 16<sup>th</sup> August, 2017.<br>
             (This order shall be effective from 1<sup>st</sup> July, 2017)
         </div>
 
@@ -200,23 +202,23 @@
         <!-- Ref No & Date -->
         <div class="ref-date-row">
             <div>Ref. No. <input type="text" class="fillable-input" style="width: 220px;" placeholder="Reference Number"></div>
-            <div>Date:- <input type="text" class="fillable-input" style="width: 140px;" placeholder="DD/MM/YYYY"></div>
+            <div>Date: - <input type="text" class="fillable-input" style="width: 140px;" placeholder="DD/MM/YYYY"></div>
         </div>
 
         <!-- School Certificate Content -->
         <div class="content-body">
             It is certified that Master/Miss 
-            <input type="text" class="fillable-input" style="width: 420px; text-transform: uppercase;" placeholder="Child's Full Name"> 
-            having, Admission No - <input type="text" class="fillable-input" style="width: 130px;" placeholder="Adm. No"> 
-            D.O.B <input type="text" class="fillable-input" style="width: 130px;" placeholder="DD/MM/YYYY"> 
-            Son/Daughter of Mr. <input type="text" class="fillable-input" style="width: 320px; text-transform: uppercase;" placeholder="Father's Name"> 
-            Was studying in class - <input type="text" class="fillable-input" style="width: 80px; text-align: center;" placeholder="Class"> 
-            Sec - <input type="text" class="fillable-input" style="width: 60px; text-align: center;" placeholder="Sec"> 
-            Roll No - <input type="text" class="fillable-input" style="width: 80px; text-align: center;" placeholder="Roll No"> 
-            during the previous academic year from - <input type="text" class="fillable-input" style="width: 110px; text-align: center;" placeholder="DD/MM/YYYY"> 
+            <input type="text" class="fillable-input" style="width: 380px; text-transform: uppercase;" placeholder="Child's Full Name"> 
+            having Admission No. <input type="text" class="fillable-input" style="width: 120px;" placeholder="Adm. No"> 
+            D.O.B <input type="text" class="fillable-input" style="width: 120px;" placeholder="DD/MM/YYYY"> 
+            Son/Daughter of Mr. <input type="text" class="fillable-input" style="width: 300px; text-transform: uppercase;" placeholder="Father's Name"> 
+            was studying in Class - <input type="text" class="fillable-input" style="width: 70px; text-align: center;" placeholder="Class"> 
+            Sec - <input type="text" class="fillable-input" style="width: 50px; text-align: center;" placeholder="Sec"> 
+            Roll No - <input type="text" class="fillable-input" style="width: 70px; text-align: center;" placeholder="Roll No"> 
+            during the previous academic year from <input type="text" class="fillable-input" style="width: 110px; text-align: center;" placeholder="DD/MM/YYYY"> 
             to <input type="text" class="fillable-input" style="width: 110px; text-align: center;" placeholder="DD/MM/YYYY"> 
-            School / institution, namely <input type="text" class="fillable-input" style="width: 350px; text-transform: uppercase;" placeholder="School Name"> 
-            vide affiliation Regd. No. / Code – <input type="text" class="fillable-input" style="width: 200px;" placeholder="Affiliation / Regd Code"> 
+            in School / Institution, namely <input type="text" class="fillable-input" style="width: 450px; text-transform: uppercase;" placeholder="School Name"> 
+            vide affiliation Regd. No. / Code – <input type="text" class="fillable-input" style="width: 180px;" placeholder="Affiliation / Regd Code"> 
             and Pattern CBSE Curriculum.
         </div>
 
@@ -238,7 +240,7 @@
 
     <!-- ================= PAGE 2: SELF DECLARATION ================= -->
     <div class="a4-page" id="page2">
-        
+
         <!-- Self Declaration Header -->
         <div class="main-title" style="margin-top: 20px;">
             SELF DECLARATION
@@ -247,15 +249,15 @@
         <!-- Declaration Content -->
         <div class="content-body" style="margin-top: 30px;">
             I, Force No - <input type="text" class="fillable-input" style="width: 150px;" placeholder="Regt. No"> 
-            Rank - <input type="text" class="fillable-input" style="width: 150px; text-transform: uppercase;" placeholder="Rank"> 
-            Name - <input type="text" class="fillable-input" style="width: 350px; text-transform: uppercase;" placeholder="Full Name"> 
-            of ITBP Unit - <input type="text" class="fillable-input" style="width: 120px; text-transform: uppercase;" placeholder="Unit"> <b>ITBP</b> 
-            do hereby certify that my Son/Daughter Namely - <input type="text" class="fillable-input" style="width: 350px; text-transform: uppercase;" placeholder="Child Name"> 
-            was studied in class - <input type="text" class="fillable-input" style="width: 80px; text-align: center;" placeholder="Class"> 
-            Sec - <input type="text" class="fillable-input" style="width: 60px; text-align: center;" placeholder="Sec"> 
-            Roll No - <input type="text" class="fillable-input" style="width: 80px; text-align: center;" placeholder="Roll No"> 
-            During the previous academic year - <input type="text" class="fillable-input" style="width: 140px; text-align: center;" placeholder="YYYY-YYYY"> 
-            in <input type="text" class="fillable-input" style="width: 400px; text-transform: uppercase;" placeholder="School Name"> School.<br>
+            Rank - <input type="text" class="fillable-input" style="width: 130px; text-transform: uppercase;" placeholder="Rank"> 
+            Name - <input type="text" class="fillable-input" style="width: 320px; text-transform: uppercase;" placeholder="Full Name"> 
+            of Unit - <input type="text" class="fillable-input" style="width: 180px; text-transform: uppercase;" placeholder="Unit Name"> 
+            do hereby certify that my Son/Daughter namely <input type="text" class="fillable-input" style="width: 320px; text-transform: uppercase;" placeholder="Child Name"> 
+            studied in Class - <input type="text" class="fillable-input" style="width: 70px; text-align: center;" placeholder="Class"> 
+            Sec - <input type="text" class="fillable-input" style="width: 50px; text-align: center;" placeholder="Sec"> 
+            Roll No - <input type="text" class="fillable-input" style="width: 70px; text-align: center;" placeholder="Roll No"> 
+            during the previous academic year <input type="text" class="fillable-input" style="width: 120px; text-align: center;" placeholder="YYYY-YYYY"> 
+            in <input type="text" class="fillable-input" style="width: 380px; text-transform: uppercase;" placeholder="School Name"> School.<br><br>
 
             In the event of any change in the particulars given which affect my eligibility for Children Education Allowance, I undertake to intimate the same promptly and refund excess payment, if any made to me.
         </div>
@@ -272,7 +274,7 @@
                 F/No: - <input type="text" class="fillable-input" style="width: 200px;"><br>
                 Rank: - <input type="text" class="fillable-input" style="width: 200px; text-transform: uppercase;"><br>
                 Branch: - <input type="text" class="fillable-input" style="width: 200px; text-transform: uppercase;"><br>
-                Unit:- <input type="text" class="fillable-input" style="width: 200px; text-transform: uppercase;">
+                Unit: - <input type="text" class="fillable-input" style="width: 200px; text-transform: uppercase;">
             </div>
         </div>
 
