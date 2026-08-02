@@ -50,12 +50,25 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    /* टेक्स्ट सिलेक्शन और कॉपी रोकने के लिए (सुरक्षा) */
     body {
       background-color: var(--bg-color);
       color: var(--text-main);
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none;   /* Safari */
+      -khtml-user-select: none;   /* Konqueror HTML */
+      -moz-user-select: none;     /* Firefox */
+      -ms-user-select: none;      /* Internet Explorer/Edge */
+      user-select: none;          /* Standard */
+    }
+
+    /* इनपुट बॉक्स में यूज़र को टाइप करने देना */
+    input, textarea {
+      -webkit-user-select: text !important;
+      user-select: text !important;
     }
 
     /* Modern Header */
@@ -383,6 +396,23 @@
   <footer>
     <p>© 2026 sitefrompdf. All rights reserved.</p>
   </footer>
+
+  <!-- Security Scripts -->
+  <script>
+    // 1. Right-Click डिसेबल करें
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+    });
+
+    // 2. Short-keys ब्लॉक करें (F12, Inspect, Console)
+    document.onkeydown = function(e) {
+      if (e.keyCode == 123) return false;
+      if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+      if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+      if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+      if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+    };
+  </script>
 
   <!-- Search Filter Script -->
   <script>
