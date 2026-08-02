@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TA FORM - यात्रा भत्ता एवं अन्य सरकारी फ़ॉर्म</title>
 
+  <!-- Open Graph / WhatsApp Link Preview Meta Tags -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://sitefrompdf.github.io/" />
+  <meta property="og:title" content="📋 सरकारी यात्रा भत्ता एवं अन्य फ़ॉर्म्स - sitefrompdf" />
+  <meta property="og:description" content="Tour TA, Transfer TA, LTC और CEA फ़ॉर्म्स ऑनलाइन ऑटो-कैलकुलेट करें या खाली PDF मुफ़्त डाउनलोड करें।" />
+  
+  <!-- Banner Image Details -->
+  <meta property="og:image" content="https://sitefrompdf.github.io/images/banner.jpeg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="848" />
+  <meta property="og:image:height" content="1264" />
+
   <!-- PWA Settings -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1b5e20">
@@ -123,6 +135,7 @@
       justify-content: center;
       gap: 10px;
       flex-wrap: wrap;
+      margin-bottom: 15px;
     }
 
     .badge {
@@ -132,6 +145,33 @@
       padding: 5px 12px;
       border-radius: 20px;
       font-weight: 600;
+    }
+
+    /* WhatsApp Share Button Style */
+    .share-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .whatsapp-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background-color: #25D366;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+      box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .whatsapp-btn:active {
+      transform: scale(0.96);
+      background-color: #1eb857;
     }
 
     /* --- 2x2 GRID SECTION (पेन से भरने के लिए खाली PDF) --- */
@@ -330,7 +370,7 @@
       .hero h2 { font-size: 28px; }
       .hero p { font-size: 16px; }
       .blank-pdf-grid {
-        grid-template-columns: repeat(4, 1fr); /* बड़ी स्क्रीन पर चारों 1 लाइन में */
+        grid-template-columns: repeat(4, 1fr);
       }
       .form-card:hover {
         transform: translateY(-4px);
@@ -355,6 +395,15 @@
       <span class="badge">⚡ ऑटो कैलकुलेशन</span>
       <span class="badge">📄 A4 PDF डाउनलोड</span>
       <span class="badge">🔒 सुरक्षित एवं फ्री</span>
+    </div>
+
+    <!-- 💬 WhatsApp Share Button -->
+    <div class="share-container">
+      <a href="https://api.whatsapp.com/send?text=सरकारी%20फ़ॉर्म्स%20(Tour%20TA,%20Transfer%20TA,%20LTC,%20CEA)%20डिजिटल%20रूप%20से%20ऑटो-कैलकुलेट%20करके%20भरें%20या%20खाली%20PDF%20डाउनलोड%20करें:%20https://sitefrompdf.github.io/" 
+         target="_blank" 
+         class="whatsapp-btn">
+        💬 दोस्तों/ग्रुप में शेयर करें
+      </a>
     </div>
   </section>
 
@@ -511,6 +560,7 @@
       if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
     };
   </script>
+
   <!-- Search Filter Script -->
   <script>
     function filterForms() {
@@ -528,6 +578,26 @@
         }
       });
     }
+  </script>
+
+  <!-- Auto Save Feature Script -->
+  <script>
+    document.querySelectorAll('input, textarea, select').forEach(element => {
+      element.addEventListener('input', () => {
+        if (element.id || element.name) {
+          localStorage.setItem(element.id || element.name, element.value);
+        }
+      });
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('input, textarea, select').forEach(element => {
+        const savedValue = localStorage.getItem(element.id || element.name);
+        if (savedValue !== null) {
+          element.value = savedValue;
+        }
+      });
+    });
   </script>
 </body>
 </html>
