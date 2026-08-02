@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
+
   <title>TA FORM - यात्रा भत्ता बिल</title>
 
   <!-- PWA Settings -->
@@ -33,6 +33,29 @@
     gtag('config', 'G-CH22M8QX1L');
   </script>
   <style>
+    :root {
+      --bg-color: #f5f5f5;
+      --page-bg: #ffffff;
+      --text-color: #000000;
+      --border-color: #000000;
+      --input-dotted: #000000;
+      --placeholder-color: #999999;
+      --total-bg: #f9f9f9;
+      --btn-back-bg: #003087;
+    }
+
+    /* 🌙 Dark Mode Theme Variables */
+    body.dark-mode {
+      --bg-color: #121212;
+      --page-bg: #1e1e1e;
+      --text-color: #e0e0e0;
+      --border-color: #555555;
+      --input-dotted: #888888;
+      --placeholder-color: #777777;
+      --total-bg: #2a2a2a;
+      --btn-back-bg: #1b5e20;
+    }
+
     @page {
       size: A4 portrait;
       margin: 5mm;
@@ -46,7 +69,9 @@
     body {
       margin: 0;
       padding: 0;
-      background-color: #f5f5f5;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
     .a4-page {
       width: 210mm;
@@ -54,11 +79,12 @@
       padding: 5mm;
       margin: 5px auto;
       box-sizing: border-box;
-      background-color: white;
+      background-color: var(--page-bg);
       border: 0px solid #ccc;
       box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
       position: relative;
       height: auto;
+      transition: background-color 0.3s ease;
     }
     .header-left { position: absolute; top: 6mm; left: 6mm; font-weight: normal; font-size: 14px; }
     .sub-bill-left { position: absolute; top: 10mm; left: 6mm; font-weight: normal; font-size: 14px; }
@@ -69,14 +95,15 @@
     .a4-page input[type="text"], 
     .a4-page input[type="number"] {
       border: none;
-      border-bottom: 1px dotted #000;
+      border-bottom: 1px dotted var(--input-dotted);
       background: transparent;
       outline: none;
       font-size: 14px;
       text-transform: uppercase;
       font-family: Arial, sans-serif;
+      color: var(--text-color);
     }
-    
+
     #customTable {
       position: relative;
       top: 105mm;
@@ -85,7 +112,7 @@
       width: 100%;
       table-layout: fixed;
     }
-    
+
     .action-buttons {
       position: absolute; 
       left: 2mm;
@@ -108,15 +135,16 @@
       transform: translateY(-1px);
     }
 
-    [contenteditable]:empty::before { content: attr(data-placeholder); color: #999; font-style: italic; pointer-events: none; }
+    [contenteditable]:empty::before { content: attr(data-placeholder); color: var(--placeholder-color); font-style: italic; pointer-events: none; }
     [contenteditable] { 
       text-transform: uppercase; 
       font-size: 12px;
       font-family: Arial, sans-serif;
+      color: var(--text-color);
     }
-    
+
     #customTable th, #customTable td {
-      border: 0.5px solid black !important;
+      border: 0.5px solid var(--border-color) !important;
       box-sizing: border-box;
     }
 
@@ -161,12 +189,12 @@
       padding: 2px 1px;
       min-height: 28px;
       line-height: 1.2;
-      color: #222;
+      color: var(--text-color);
       user-select: none;
       pointer-events: none;
     }
     .dt-display.empty {
-      color: #aaa;
+      color: var(--placeholder-color);
       font-style: italic;
       font-size: 10px;
     }
@@ -176,7 +204,7 @@
       font-weight: 600;
       width: 100%;
       text-align: center;
-      border-bottom: 0.8px solid #555;
+      border-bottom: 0.8px solid var(--border-color);
       padding-bottom: 2px;
       margin-bottom: 2px;
     }
@@ -217,16 +245,16 @@
       text-align: left;
       padding: 10px 5px;
     }
-    
+
     #customTable tr {
       page-break-inside: avoid !important;
       break-inside: avoid !important;
     }
-    
+
     .total-row td {
       font-weight: bold;
-      background-color: #f9f9f9 !important; 
-      border-bottom: 2px solid black !important; 
+      background-color: var(--total-bg) !important; 
+      border-bottom: 2px solid var(--border-color) !important; 
     }
 
     .a4-image-page {
@@ -246,7 +274,7 @@
     .back-btn a {
       display: inline-block;
       padding: 6px 16px;
-      background: #003087;
+      background: var(--btn-back-bg);
       color: white;
       text-decoration: none;
       border-radius: 4px;
@@ -254,14 +282,15 @@
       font-family: Arial, sans-serif;
     }
 
-    /* Print Styles */
+    /* Print Styles: Forced White Background and Black Text for Clean Printing */
     @media print {
-      body { 
+      body, .a4-page { 
         background-color: white !important; 
+        color: black !important;
         margin: 0 !important;
         padding: 0 !important;
       }
-      
+
       .back-btn, .action-buttons, footer, #instructionModal { 
         display: none !important; 
       }
@@ -282,6 +311,20 @@
       .a4-page input[type="text"], 
       .a4-page input[type="number"] {
         border-bottom: 1px dotted #000 !important;
+        color: black !important;
+      }
+
+      [contenteditable] {
+        color: black !important;
+      }
+
+      #customTable th, #customTable td {
+        border: 0.5px solid black !important;
+      }
+
+      .total-row td {
+        background-color: #f9f9f9 !important;
+        border-bottom: 2px solid black !important;
       }
 
       .a4-image-page {
@@ -408,14 +451,14 @@
       भाग-क (सरकारी सेवक द्वारा भरा जाना है)<br />
       PART-A (To be filled up by Government Servant)
     </div>
-    
+
     <div style="position: absolute; top: 60mm; left: 6mm; width: 88%; font-size: 14px;">
       <div style="position: absolute; top: 2mm; left: 0mm;line-height:0.8;">
         1.&nbsp;नाम<br>
         NAME -
         <input type="text" maxlength="30" style="width: 300px; height: 18px; padding: 2px 5px; font-weight: normal;" placeholder="पूरा नाम (Full Name)" />
       </div>
-      
+
       <div style="position: absolute; top: 1mm; left: 400px;line-height:0.8;">
         2.दल संख्या<br />
         Regimental No -
@@ -441,7 +484,7 @@
         लेवल<br />LEVEL -
         <input type="number" maxlength="2" inputmode="numeric" style="width: 60px; height: 18px; padding: 2px 5px;" placeholder="01-18" />
       </div>
-      
+
       <div style="position: absolute; top: 20mm; left: 0mm; width: 750px; font-weight: normal; font-size: 14px; display: flex; align-items: center;">
         <label for="headquarters" style="margin-right: 10px; font-size: 14px;">5.मुख्यालय/Headquarters</label>
         <input type="text" id="headquarters" maxlength="100" style="flex-grow: 1; height:20px; padding: 2px 5px;" placeholder="वर्तमान मुख्यालय का नाम" />
@@ -512,7 +555,7 @@
         </tr>
       </tbody>
     </table>
-    
+
     <div class="action-buttons" id="actionButtons" style="top: 105mm;"> 
       <button id="addTravelRow" style="font-size: 13px; padding: 5px 10px; cursor: pointer; background-color: #2196F3; color: white; border: none;">➕ यात्रा विवरण</button>
       <button id="addMergedRow" style="font-size: 13px; padding: 5px 10px; cursor: pointer; background-color: #9C27B0; color: white; border: none;">➕ विश्राम/हॉल्ट</button>
@@ -520,7 +563,7 @@
       <button id="deleteLastRow" style="font-size: 13px; padding: 5px 10px; cursor: pointer; background-color: #f44336; color: white; border: none;">🗑 आखिरी रो हटाएँ</button>
       <button id="clearForm" style="font-size: 13px; padding: 5px 10px; cursor: pointer; background-color: #ff6f00; color: white; border: none;">✖ फॉर्म साफ करें</button>
       <button id="downloadPdf" style="font-size: 13px; padding: 5px 12px; cursor: pointer; background-color: #4CAF50; color: white; border: none;">⬇️ PDF डाउनलोड</button>
-      <span id="saveStatus" style="font-size: 11px; color: #555; margin-left: 6px; font-style: italic;"></span>
+      <span id="saveStatus" style="font-size: 11px; color: var(--text-color); opacity: 0.8; margin-left: 6px; font-style: italic;"></span>
     </div>
   </div>
 
@@ -546,6 +589,11 @@
   const actionButtons = document.getElementById('actionButtons');
   const a4Page        = document.getElementById('a4Page');
   const saveStatus    = document.getElementById('saveStatus');
+
+  // Auto Load Dark Theme Preference
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark-mode');
+  }
 
   const DATE_CELL_HTML = (title) =>
     `<td class="date-cell">` +
@@ -576,14 +624,13 @@
   const totalRowHTML = (amt) =>
     `<tr data-row-type="total" class="total-row">` +
       `<td colspan="5" style="text-align:right;border-right:none!important;font-weight:bold;padding-right:10px;">कुल योग / Total:</td>` +
-      `<td colspan="2" id="liveTotal" style="text-align:center;border-left:none!important;font-weight:bold;color:#000;">₹ ${amt.toFixed(2)}</td>` +
+      `<td colspan="2" id="liveTotal" style="text-align:center;border-left:none!important;font-weight:bold;">₹ ${amt.toFixed(2)}</td>` +
       `<td colspan="3" style="text-align:center;"></td>` +
     `</tr>`;
 
   function updatePurposeRowspan() {
     const purposeCell = document.getElementById('cell-4-9');
     if (purposeCell) {
-      // केवल यात्रा और हॉल्ट पंक्तियों को गिनें (Total Row को छोड़ कर)
       const validRows = tableBody.querySelectorAll('tr[data-row-type="travel"], tr[data-row-type="halt"]').length;
       purposeCell.rowSpan = Math.max(1, validRows);
     }
@@ -665,7 +712,7 @@
       let t = this.textContent.replace(/[^0-9.]/g,'');
       const p = t.split('.');
       if (p.length > 2) t = p[0]+'.'+p.slice(1).join('');
-      
+
       if (this.textContent !== t) {
         this.textContent = t;
         const sel = window.getSelection(), r = document.createRange();
@@ -696,7 +743,7 @@
       localStorage.setItem(RECENT_KEY, JSON.stringify({
         lastSaved : Date.now(),
         form      : 'ta-bill',
-        path      : '/ta-bill.html',
+        path      : '/tour-ta.html',
         title     : 'यात्रा भत्ता बिल (TA Bill)',
         name      : nameEl ? nameEl.value.trim() : '',
         regNo     : regEl  ? regEl.value.trim()  : ''
@@ -746,7 +793,7 @@
     const tmp = document.createElement('tbody');
     tmp.innerHTML = travelRowHTML();
     const newTr = tmp.firstElementChild;
-    
+
     const existingTotal = tableBody.querySelector('tr[data-row-type="total"]');
     if (existingTotal) {
       tableBody.insertBefore(newTr, existingTotal);
@@ -799,7 +846,6 @@
 
   document.getElementById('deleteLastRow').addEventListener('click', function() {
     const rows = Array.from(tableBody.rows);
-    // आखिरी डिलीट करने योग्य रो (Total row छोड़कर) ढूँढें
     const deletableRows = rows.filter(r => r.dataset.deletable === "true");
     if (deletableRows.length === 0) {
       alert('शुरुआती यात्रा विवरण रो को हटाया नहीं जा सकता।');
