@@ -48,11 +48,44 @@
       padding: 0;
       background-color: #f5f5f5;
     }
+
+    /* मुख्य हेडर (sitefrompdf) और होम बटन */
+    .site-header {
+      background: linear-gradient(135deg, #1b5e20, #2e7d32);
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .site-header h1 {
+      font-size: 18px;
+      margin: 0;
+      font-weight: 700;
+    }
+    .home-back-btn {
+      color: white;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .home-back-btn:hover {
+      background: rgba(255, 255, 255, 0.35);
+    }
+
     .a4-page {
       width: 210mm;
       min-height: 297mm;
       padding: 5mm;
-      margin: 5px auto;
+      margin: 15px auto;
       box-sizing: border-box;
       background-color: white;
       border: 0px solid #ccc;
@@ -237,23 +270,6 @@
       overflow: hidden;
     }
 
-    .back-btn {
-      display: block;
-      width: 210mm;
-      margin: 8px auto 0;
-      text-align: left;
-    }
-    .back-btn a {
-      display: inline-block;
-      padding: 6px 16px;
-      background: #003087;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-      font-size: 14px;
-      font-family: Arial, sans-serif;
-    }
-
     /* Print Styles */
     @media print {
       body { 
@@ -262,7 +278,7 @@
         padding: 0 !important;
       }
 
-      .back-btn, .action-buttons, footer, #instructionModal { 
+      .site-header, .action-buttons, footer, #instructionModal { 
         display: none !important; 
       }
 
@@ -320,9 +336,11 @@
 </head>
 <body>
 
-  <div class="back-btn">
-    <a href="index.html">&larr; होम पेज पर वापस जाएं</a>
-  </div>
+  <!-- sitefrompdf Top Header with Home Button -->
+  <header class="site-header">
+    <h1>📋 sitefrompdf</h1>
+    <a href="index.html" class="home-back-btn">&larr; होम पेज</a>
+  </header>
 
   <div id="instructionModal" style="
     position: fixed; 
@@ -799,7 +817,6 @@
 
   document.getElementById('deleteLastRow').addEventListener('click', function() {
     const rows = Array.from(tableBody.rows);
-    // आखिरी डिलीट करने योग्य रो (Total row छोड़कर) ढूँढें
     const deletableRows = rows.filter(r => r.dataset.deletable === "true");
     if (deletableRows.length === 0) {
       alert('शुरुआती यात्रा विवरण रो को हटाया नहीं जा सकता।');
@@ -850,7 +867,7 @@
       window.addEventListener('resize', updateLayout);
     });
 
-   tableBody.querySelectorAll('td[data-placeholder="₹"]').forEach(restrictNumberInput);
+    tableBody.querySelectorAll('td[data-placeholder="₹"]').forEach(restrictNumberInput);
     setDateLimits();
   });
 </script>
