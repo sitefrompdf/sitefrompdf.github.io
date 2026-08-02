@@ -50,28 +50,33 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* टेक्स्ट सिलेक्शन और कॉपी रोकने के लिए (सुरक्षा) */
+    /* स्क्रीन को दाएँ-बाएँ हिलने से रोकने के लिए */
+    html, body {
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* सुरक्षा: टेक्स्ट सिलेक्शन और कॉपी रोकना */
     body {
       background-color: var(--bg-color);
       color: var(--text-main);
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      -webkit-touch-callout: none; /* iOS Safari */
-      -webkit-user-select: none;   /* Safari */
-      -khtml-user-select: none;   /* Konqueror HTML */
-      -moz-user-select: none;     /* Firefox */
-      -ms-user-select: none;      /* Internet Explorer/Edge */
-      user-select: none;          /* Standard */
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
-    /* इनपुट बॉक्स में यूज़र को टाइप करने देना */
     input, textarea {
       -webkit-user-select: text !important;
       user-select: text !important;
     }
 
-    /* Modern Header */
+    /* Header */
     header {
       background: linear-gradient(135deg, var(--primary), #2e7d32);
       color: white;
@@ -88,12 +93,9 @@
     header h1 {
       font-size: 20px;
       font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
-    /* Mobile Friendly Hero */
+    /* Hero */
     .hero {
       text-align: center;
       padding: 25px 20px 20px 20px;
@@ -116,7 +118,6 @@
       line-height: 1.4;
     }
 
-    /* Badges */
     .features-badges {
       display: flex;
       justify-content: center;
@@ -133,11 +134,79 @@
       font-weight: 600;
     }
 
+    /* --- 2x2 GRID SECTION (पेन से भरने के लिए खाली PDF) --- */
+    .download-section {
+      max-width: 1200px;
+      margin: 15px auto 0 auto;
+      padding: 0 15px;
+      width: 100%;
+    }
+
+    .download-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+
+    /* 2 Columns Layout */
+    .blank-pdf-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      width: 100%;
+    }
+
+    .blank-pdf-chip {
+      background: #ffffff;
+      border: 1px solid #c8e6c9;
+      border-radius: 8px;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+      color: #1b5e20;
+      font-size: 12px;
+      font-weight: 600;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      transition: background 0.2s;
+    }
+
+    .blank-pdf-chip:active {
+      background: #e8f5e9;
+    }
+
+    .chip-left {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chip-icon {
+      font-size: 15px;
+    }
+
+    .chip-btn {
+      background: #4caf50;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
     /* Search Bar */
     .search-container {
       max-width: 1200px;
       margin: 15px auto 0 auto;
-      padding: 0 20px;
+      padding: 0 15px;
+      width: 100%;
     }
 
     .search-input {
@@ -148,19 +217,15 @@
       font-size: 15px;
       outline: none;
       box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-      transition: border-color 0.2s;
-    }
-
-    .search-input:focus {
-      border-color: var(--primary-light);
     }
 
     /* Main Container & Grid */
     .container {
       max-width: 1200px;
       margin: 20px auto 40px auto;
-      padding: 0 20px;
+      padding: 0 15px;
       flex: 1;
+      width: 100%;
     }
 
     .section-title {
@@ -178,7 +243,6 @@
       gap: 16px;
     }
 
-    /* Entire Card Clickable Design */
     .form-card {
       background: var(--card-bg);
       border-radius: 12px;
@@ -211,9 +275,6 @@
       background: #f1f8e9;
       padding: 8px;
       border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     .card-title {
@@ -238,15 +299,10 @@
       font-size: 14px;
     }
 
-    /* Disabled State Style */
     .form-card.disabled {
       opacity: 0.65;
       border-left-color: #adb5bd;
       cursor: not-allowed;
-    }
-
-    .form-card.disabled:active {
-      transform: none;
     }
 
     .coming-soon-badge {
@@ -259,10 +315,8 @@
       padding: 3px 8px;
       border-radius: 4px;
       font-weight: 600;
-      text-transform: uppercase;
     }
 
-    /* Footer */
     footer {
       text-align: center;
       padding: 20px;
@@ -271,11 +325,13 @@
       font-size: 13px;
     }
 
-    /* Desktop Tweaks */
     @media (min-width: 768px) {
       .hero { padding: 40px 20px; }
       .hero h2 { font-size: 28px; }
       .hero p { font-size: 16px; }
+      .blank-pdf-grid {
+        grid-template-columns: repeat(4, 1fr); /* बड़ी स्क्रीन पर चारों 1 लाइन में */
+      }
       .form-card:hover {
         transform: translateY(-4px);
         box-shadow: 0 6px 16px rgba(0,0,0,0.1);
@@ -293,7 +349,7 @@
   <!-- Hero Section -->
   <section class="hero">
     <h2>सभी फ़ॉर्म्स डिजिटल रूप से भरें</h2>
-    <p>ऑटो-कैलकुलेशन का लाभ उठाएं और तुरंत प्रिंट-रेडी A4 PDF डाउनलोड करें।</p>
+    <p>ऑनलाइन ऑटो-कैलकुलेट करें या पेन से भरने के लिए खाली फ़ॉर्म डाउनलोड करें।</p>
     
     <div class="features-badges">
       <span class="badge">⚡ ऑटो कैलकुलेशन</span>
@@ -302,14 +358,58 @@
     </div>
   </section>
 
+  <!-- 🎯 2x2 GRID SECTION (पेन से भरने के लिए खाली PDF) -->
+  <div class="download-section">
+    <div class="download-title">✍️ खाली फ़ॉर्म डाउनलोड करें (पेन से भरने के लिए):</div>
+    <div class="blank-pdf-grid">
+      
+      <!-- 1. TOUR TA -->
+      <a href="pdfs/blank-tour-ta.pdf" download class="blank-pdf-chip">
+        <div class="chip-left">
+          <span class="chip-icon">📄</span>
+          <span>Tour TA</span>
+        </div>
+        <span class="chip-btn">PDF ⬇️</span>
+      </a>
+
+      <!-- 2. TRANSFER TA -->
+      <a href="pdfs/blank-transfer-ta.pdf" download class="blank-pdf-chip">
+        <div class="chip-left">
+          <span class="chip-icon">📄</span>
+          <span>Transfer TA</span>
+        </div>
+        <span class="chip-btn">PDF ⬇️</span>
+      </a>
+
+      <!-- 3. LTC -->
+      <a href="pdfs/blank-ltc.pdf" download class="blank-pdf-chip">
+        <div class="chip-left">
+          <span class="chip-icon">📄</span>
+          <span>LTC Claim</span>
+        </div>
+        <span class="chip-btn">PDF ⬇️</span>
+      </a>
+
+      <!-- 4. CEA -->
+      <a href="pdfs/blank-cea.pdf" download class="blank-pdf-chip">
+        <div class="chip-left">
+          <span class="chip-icon">📄</span>
+          <span>CEA Claim</span>
+        </div>
+        <span class="chip-btn">PDF ⬇️</span>
+      </a>
+
+    </div>
+  </div>
+
   <!-- Search Filter -->
   <div class="search-container">
-    <input type="text" id="searchInput" class="search-input" placeholder="🔍 फ़ॉर्म का नाम खोजें..." onkeyup="filterForms()">
+    <input type="text" id="searchInput" class="search-input" placeholder="🔍 ऑनलाइन फ़ॉर्म का नाम खोजें..." onkeyup="filterForms()">
   </div>
 
   <!-- Forms Selection Section -->
   <main class="container">
-    <h3 class="section-title">उपलब्ध फ़ॉर्म चुनें (Select Form)</h3>
+    <h3 class="section-title">ऑनलाइन भरने के लिए फ़ॉर्म चुनें (Select Form)</h3>
 
     <div class="forms-grid" id="formsGrid">
 
@@ -323,7 +423,7 @@
           <div class="card-desc">दौरे के लिए यात्रा भत्ता बिल। इसमें ऑटो-कैलकुलेशन और डेट-टाइम पिकर शामिल है।</div>
         </div>
         <div class="card-footer-btn">
-          <span>फ़ॉर्म भरें</span>
+          <span>ऑनलाइन भरें</span>
           <span>➔</span>
         </div>
       </a>
@@ -338,7 +438,7 @@
           <div class="card-desc">स्थानांतरण पर मिलने वाले यात्रा भत्ते और सामान परिवहन का विवरण दर्ज करें।</div>
         </div>
         <div class="card-footer-btn">
-          <span>फ़ॉर्म भरें</span>
+          <span>ऑनलाइन भरें</span>
           <span>➔</span>
         </div>
       </a>
@@ -353,7 +453,7 @@
           <div class="card-desc">लीव ट्रैवल कंसेशन (LTC) क्लेम और एडवांस के लिए आवेदन फ़ॉर्म।</div>
         </div>
         <div class="card-footer-btn">
-          <span>फ़ॉर्म भरें</span>
+          <span>ऑनलाइन भरें</span>
           <span>➔</span>
         </div>
       </a>
@@ -368,7 +468,7 @@
           <div class="card-desc">बच्चों की शिक्षा भत्ता (Children Education Allowance) का दावा फ़ॉर्म।</div>
         </div>
         <div class="card-footer-btn">
-          <span>फ़ॉर्म भरें</span>
+          <span>ऑनलाइन भरें</span>
           <span>➔</span>
         </div>
       </a>
@@ -399,12 +499,10 @@
 
   <!-- Security Scripts -->
   <script>
-    // 1. Right-Click डिसेबल करें
     document.addEventListener('contextmenu', function(e) {
       e.preventDefault();
     });
 
-    // 2. Short-keys ब्लॉक करें (F12, Inspect, Console)
     document.onkeydown = function(e) {
       if (e.keyCode == 123) return false;
       if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
