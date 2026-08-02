@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>TA FORM - यात्रा भत्ता बिल</title>
+  <title>TA FORM - यात्रा भत्ता एवं अन्य सरकारी फ़ॉर्म</title>
 
   <!-- PWA Settings -->
   <link rel="manifest" href="manifest.json">
@@ -24,7 +23,7 @@
   <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5314158636254894" crossorigin="anonymous"></script>
 
-  <!-- Google Analytics (gtag.js) -->
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-CH22M8QX1L"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -32,127 +31,242 @@
     gtag('js', new Date());
     gtag('config', 'G-CH22M8QX1L');
   </script>
+
   <style>
+    :root {
+      --primary: #1b5e20;
+      --primary-light: #4caf50;
+      --bg-color: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-main: #212529;
+      --text-muted: #6c757d;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Arial, sans-serif;
-    }
-    body {
-      background-color: #f4f6f9;
-      color: #333;
-    }
-    /* Header */
-    header {
-      background: linear-gradient(135deg, #1b5e20, #4caf50);
-      color: white;
-      padding: 20px 10%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    header h1 {
-      font-size: 24px;
-    }
-    /* Hero Section */
-    .hero {
-      text-align: center;
-      padding: 50px 20px;
-      background: white;
-      border-bottom: 1px solid #e0e0e0;
-    }
-    .hero h2 {
-      font-size: 32px;
-      color: #1b5e20;
-      margin-bottom: 10px;
-    }
-    .hero p {
-      font-size: 18px;
-      color: #666;
-      max-width: 700px;
-      margin: 0 auto;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    /* Container & Grid */
-    .container {
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Modern Header */
+    header {
+      background: linear-gradient(135deg, var(--primary), #2e7d32);
+      color: white;
+      padding: 16px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Mobile Friendly Hero */
+    .hero {
+      text-align: center;
+      padding: 25px 20px 20px 20px;
+      background: white;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .hero h2 {
+      font-size: 22px;
+      color: var(--primary);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .hero p {
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 15px auto;
+      line-height: 1.4;
+    }
+
+    /* Badges */
+    .features-badges {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      background: #e8f5e9;
+      color: var(--primary);
+      font-size: 12px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    /* Search Bar */
+    .search-container {
       max-width: 1200px;
-      margin: 40px auto;
+      margin: 15px auto 0 auto;
       padding: 0 20px;
     }
-    .section-title {
-      font-size: 22px;
-      margin-bottom: 20px;
-      color: #222;
-      border-left: 5px solid #4caf50;
-      padding-left: 10px;
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #ced4da;
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      transition: border-color 0.2s;
     }
+
+    .search-input:focus {
+      border-color: var(--primary-light);
+    }
+
+    /* Main Container & Grid */
+    .container {
+      max-width: 1200px;
+      margin: 20px auto 40px auto;
+      padding: 0 20px;
+      flex: 1;
+    }
+
+    .section-title {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: var(--text-main);
+      border-left: 4px solid var(--primary-light);
+      padding-left: 10px;
+      font-weight: 700;
+    }
+
     .forms-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 25px;
+      gap: 16px;
     }
 
-    /* Card Design */
+    /* Entire Card Clickable Design */
     .form-card {
-      background: white;
-      border-radius: 10px;
-      padding: 25px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      border-top: 4px solid #4caf50;
+      border: 1px solid #e9ecef;
+      border-left: 5px solid var(--primary-light);
+      text-decoration: none;
+      color: inherit;
+      position: relative;
     }
-    .form-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+
+    .form-card:active {
+      transform: scale(0.98);
     }
-    .card-icon {
-      font-size: 40px;
-      margin-bottom: 15px;
-    }
-    .card-title {
-      font-size: 20px;
-      font-weight: bold;
-      color: #1b5e20;
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       margin-bottom: 10px;
     }
+
+    .card-icon {
+      font-size: 28px;
+      background: #f1f8e9;
+      padding: 8px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
     .card-desc {
-      font-size: 14px;
-      color: #666;
-      line-height: 1.5;
-      margin-bottom: 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-bottom: 15px;
     }
-    .btn {
-      display: inline-block;
-      text-align: center;
-      background-color: #4caf50;
-      color: white;
-      padding: 10px 18px;
-      text-decoration: none;
-      border-radius: 6px;
+
+    .card-footer-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--primary-light);
       font-weight: 600;
-      transition: background 0.3s;
+      font-size: 14px;
     }
-    .btn:hover {
-      background-color: #388e3c;
-    }
-    .btn-disabled {
-      background-color: #ccc;
+
+    /* Disabled State Style */
+    .form-card.disabled {
+      opacity: 0.65;
+      border-left-color: #adb5bd;
       cursor: not-allowed;
+    }
+
+    .form-card.disabled:active {
+      transform: none;
+    }
+
+    .coming-soon-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: #e9ecef;
+      color: #495057;
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
     }
 
     /* Footer */
     footer {
       text-align: center;
       padding: 20px;
-      background: #222;
-      color: white;
-      margin-top: 60px;
-      font-size: 14px;
+      background: #1a1a1a;
+      color: #aaa;
+      font-size: 13px;
+    }
+
+    /* Desktop Tweaks */
+    @media (min-width: 768px) {
+      .hero { padding: 40px 20px; }
+      .hero h2 { font-size: 28px; }
+      .hero p { font-size: 16px; }
+      .form-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+      }
     }
   </style>
 </head>
@@ -165,75 +279,128 @@
 
   <!-- Hero Section -->
   <section class="hero">
-    <h3>सभी फ़ॉर्म्स डिजिटल रूप से भरें</h3>
-    <p>अपने सभी आवश्यक फ़ॉर्म भरें, ऑटो-कैलकुलेशन का लाभ उठाएं और सीधे A4 साइज़ PDF डाउनलोड करें।</p>
+    <h2>सभी फ़ॉर्म्स डिजिटल रूप से भरें</h2>
+    <p>ऑटो-कैलकुलेशन का लाभ उठाएं और तुरंत प्रिंट-रेडी A4 PDF डाउनलोड करें।</p>
+    
+    <div class="features-badges">
+      <span class="badge">⚡ ऑटो कैलकुलेशन</span>
+      <span class="badge">📄 A4 PDF डाउनलोड</span>
+      <span class="badge">🔒 सुरक्षित एवं फ्री</span>
+    </div>
   </section>
 
-  <!-- Forms Selection Section -->
-  <div class="container">
-    <h3 class="section-title">उपलब्ध फ़ॉर्म चुनिए (Select Your Form)</h3>
+  <!-- Search Filter -->
+  <div class="search-container">
+    <input type="text" id="searchInput" class="search-input" placeholder="🔍 फ़ॉर्म का नाम खोजें..." onkeyup="filterForms()">
+  </div>
 
-    <div class="forms-grid">
-      
+  <!-- Forms Selection Section -->
+  <main class="container">
+    <h3 class="section-title">उपलब्ध फ़ॉर्म चुनें (Select Form)</h3>
+
+    <div class="forms-grid" id="formsGrid">
+
       <!-- 1. TOUR TA -->
-      <div class="form-card">
+      <a href="tour-ta.html" class="form-card">
         <div>
-          <div class="card-icon">🧳</div>
-          <div class="card-title">1. TOUR TA BILL</div>
-          <div class="card-desc">दौरे के लिए यात्रा भत्ता बिल (Travelling Allowance Bill for Tour). इसमें डायनेमिक टेबल और डेट-टाइमर पिकर शामिल है।</div>
+          <div class="card-header">
+            <div class="card-icon">🧳</div>
+            <div class="card-title">1. TOUR TA BILL</div>
+          </div>
+          <div class="card-desc">दौरे के लिए यात्रा भत्ता बिल। इसमें ऑटो-कैलकुलेशन और डेट-टाइम पिकर शामिल है।</div>
         </div>
-        <a href="tour-ta.html" class="btn">फ़ॉर्म भरें ➔</a>
-      </div>
+        <div class="card-footer-btn">
+          <span>फ़ॉर्म भरें</span>
+          <span>➔</span>
+        </div>
+      </a>
 
       <!-- 2. TRANSFER TA -->
-      <div class="form-card">
+      <a href="tfr.html" class="form-card">
         <div>
-          <div class="card-icon">🚚</div>
-          <div class="card-title">2. TRANSFER TA BILL</div>
-          <div class="card-desc">स्थानांतरण पर मिलने वाले यात्रा भत्ते और सामान परिवहन का विवरण दर्ज करने के लिए फ़ॉर्म।</div>
+          <div class="card-header">
+            <div class="card-icon">🚚</div>
+            <div class="card-title">2. TRANSFER TA BILL</div>
+          </div>
+          <div class="card-desc">स्थानांतरण पर मिलने वाले यात्रा भत्ते और सामान परिवहन का विवरण दर्ज करें।</div>
         </div>
-       <a href="tfr.html" class="btn" >फ़ॉर्म भरें ➔</a>
-      </div>
+        <div class="card-footer-btn">
+          <span>फ़ॉर्म भरें</span>
+          <span>➔</span>
+        </div>
+      </a>
 
       <!-- 3. LTC FORM -->
-      <div class="form-card">
+      <a href="ltcbill.html" class="form-card">
         <div>
-          <div class="card-icon">✈️</div>
-          <div class="card-title">3. LTC FORM</div>
+          <div class="card-header">
+            <div class="card-icon">✈️</div>
+            <div class="card-title">3. LTC FORM</div>
+          </div>
           <div class="card-desc">लीव ट्रैवल कंसेशन (LTC) क्लेम और एडवांस के लिए आवेदन फ़ॉर्म।</div>
         </div>
-        <a href="ltcbill.html" class="btn">फ़ॉर्म भरें ➔</a>
-         <!--<a href="#" class="btn btn-disabled" onclick="return false;">coming soon ➔</a>-->
-      </div>
-
-      <!-- 4. FORM NO 3 -->
-      <div class="form-card">
-        <div>
-          <div class="card-icon">📋</div>
-          <div class="card-title">4. FORM NO. 3</div>
-          <div class="card-desc">परिवार के सदस्यों के विवरण दर्ज करने के लिए फ़ॉर्म नंबर 3.</div>
+        <div class="card-footer-btn">
+          <span>फ़ॉर्म भरें</span>
+          <span>➔</span>
         </div>
-        <!-- <a href="form-3.html" class="btn">फ़ॉर्म भरें ➔</a> -->
-         <a href="#" class="btn btn-disabled" onclick="return false;">coming soon ➔</a>
-      </div>
+      </a>
 
-      <!-- 5. CEA FORM -->
-      <div class="form-card">
+      <!-- 4. CEA FORM -->
+      <a href="cea.html" class="form-card">
         <div>
-          <div class="card-icon">🎓</div>
-          <div class="card-title">5. CEA FORM</div>
+          <div class="card-header">
+            <div class="card-icon">🎓</div>
+            <div class="card-title">5. CEA FORM</div>
+          </div>
           <div class="card-desc">बच्चों की शिक्षा भत्ता (Children Education Allowance) का दावा फ़ॉर्म।</div>
         </div>
-       <a href="cea.html" class="btn">फॉर्म भरे➔</a>
+        <div class="card-footer-btn">
+          <span>फ़ॉर्म भरें</span>
+          <span>➔</span>
+        </div>
+      </a>
+
+      <!-- 5. FORM NO 3 (Disabled) -->
+      <div class="form-card disabled">
+        <span class="coming-soon-badge">जल्द आ रहा है</span>
+        <div>
+          <div class="card-header">
+            <div class="card-icon">📋</div>
+            <div class="card-title">4. FORM NO. 3</div>
+          </div>
+          <div class="card-desc">परिवार के सदस्यों के विवरण दर्ज करने के लिए फ़ॉर्म नंबर 3.</div>
+        </div>
+        <div class="card-footer-btn" style="color: #6c757d;">
+          <span>उपलब्ध नहीं</span>
+          <span>🔒</span>
+        </div>
       </div>
 
     </div>
-  </div>
+  </main>
 
   <!-- Footer -->
   <footer>
     <p>© 2026 sitefrompdf. All rights reserved.</p>
   </footer>
 
+  <!-- Search Filter Script -->
+  <script>
+    function filterForms() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const cards = document.getElementsByClassName('form-card');
+
+      Array.from(cards).forEach(card => {
+        const title = card.querySelector('.card-title').innerText.toLowerCase();
+        const desc = card.querySelector('.card-desc').innerText.toLowerCase();
+        
+        if (title.includes(input) || desc.includes(input)) {
+          card.style.display = "flex";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    }
+  </script>
 </body>
 </html>
