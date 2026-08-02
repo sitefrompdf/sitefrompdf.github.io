@@ -10,7 +10,7 @@
   <meta property="og:url" content="https://sitefrompdf.github.io/" />
   <meta property="og:title" content="📋 सरकारी यात्रा भत्ता एवं अन्य फ़ॉर्म्स - sitefrompdf" />
   <meta property="og:description" content="Tour TA, Transfer TA, LTC और CEA फ़ॉर्म्स ऑनलाइन ऑटो-कैलकुलेट करें या खाली PDF मुफ़्त डाउनलोड करें।" />
-  
+
   <!-- Banner Image Details -->
   <meta property="og:image" content="https://sitefrompdf.github.io/images/banner.jpg" />
   <meta property="og:image:type" content="image/jpg" />
@@ -52,6 +52,28 @@
       --card-bg: #ffffff;
       --text-main: #212529;
       --text-muted: #6c757d;
+      --border-color: #e9ecef;
+      --chip-bg: #ffffff;
+      --chip-border: #c8e6c9;
+      --input-bg: #ffffff;
+      --footer-bg: #1a1a1a;
+      --footer-text: #aaa;
+    }
+
+    /* 🌙 Dark Mode Theme Variables */
+    body.dark-mode {
+      --primary: #81c784;
+      --primary-light: #66bb6a;
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --text-main: #e0e0e0;
+      --text-muted: #a0a0a0;
+      --border-color: #333333;
+      --chip-bg: #1e1e1e;
+      --chip-border: #2e7d32;
+      --input-bg: #2a2a2a;
+      --footer-bg: #0a0a0a;
+      --footer-text: #888888;
     }
 
     * {
@@ -81,6 +103,7 @@
       -moz-user-select: none;
       -ms-user-select: none;
       user-select: none;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     input, textarea {
@@ -90,9 +113,9 @@
 
     /* Header */
     header {
-      background: linear-gradient(135deg, var(--primary), #2e7d32);
+      background: linear-gradient(135deg, #1b5e20, #2e7d32);
       color: white;
-      padding: 16px 20px;
+      padding: 14px 20px;
       position: sticky;
       top: 0;
       z-index: 100;
@@ -105,14 +128,36 @@
     header h1 {
       font-size: 20px;
       font-weight: 700;
+      color: #ffffff;
+    }
+
+    /* Dark Mode Toggle Button */
+    .theme-toggle-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+
+    .theme-toggle-btn:active {
+      background: rgba(255, 255, 255, 0.35);
     }
 
     /* Hero */
     .hero {
       text-align: center;
       padding: 25px 20px 20px 20px;
-      background: white;
-      border-bottom: 1px solid #e9ecef;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      transition: background-color 0.3s ease;
     }
 
     .hero h2 {
@@ -139,7 +184,7 @@
     }
 
     .badge {
-      background: #e8f5e9;
+      background: rgba(76, 175, 80, 0.15);
       color: var(--primary);
       font-size: 12px;
       padding: 5px 12px;
@@ -185,7 +230,7 @@
     .download-title {
       font-size: 13px;
       font-weight: 700;
-      color: #333;
+      color: var(--text-main);
       margin-bottom: 10px;
       line-height: 1.3;
     }
@@ -199,15 +244,15 @@
     }
 
     .blank-pdf-chip {
-      background: #ffffff;
-      border: 1px solid #c8e6c9;
+      background: var(--chip-bg);
+      border: 1px solid var(--chip-border);
       border-radius: 8px;
       padding: 8px 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       text-decoration: none;
-      color: #1b5e20;
+      color: var(--primary);
       font-size: 12px;
       font-weight: 600;
       box-shadow: 0 1px 4px rgba(0,0,0,0.04);
@@ -215,7 +260,7 @@
     }
 
     .blank-pdf-chip:active {
-      background: #e8f5e9;
+      background: rgba(76, 175, 80, 0.1);
     }
 
     .chip-left {
@@ -252,7 +297,9 @@
     .search-input {
       width: 100%;
       padding: 12px 16px;
-      border: 1px solid #ced4da;
+      background-color: var(--input-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
       border-radius: 8px;
       font-size: 15px;
       outline: none;
@@ -288,11 +335,11 @@
       border-radius: 12px;
       padding: 18px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      border: 1px solid #e9ecef;
+      border: 1px solid var(--border-color);
       border-left: 5px solid var(--primary-light);
       text-decoration: none;
       color: inherit;
@@ -312,7 +359,7 @@
 
     .card-icon {
       font-size: 28px;
-      background: #f1f8e9;
+      background: rgba(76, 175, 80, 0.1);
       padding: 8px;
       border-radius: 10px;
     }
@@ -341,7 +388,7 @@
 
     .form-card.disabled {
       opacity: 0.65;
-      border-left-color: #adb5bd;
+      border-left-color: var(--text-muted);
       cursor: not-allowed;
     }
 
@@ -349,8 +396,8 @@
       position: absolute;
       top: 12px;
       right: 12px;
-      background: #e9ecef;
-      color: #495057;
+      background: var(--border-color);
+      color: var(--text-muted);
       font-size: 10px;
       padding: 3px 8px;
       border-radius: 4px;
@@ -360,9 +407,10 @@
     footer {
       text-align: center;
       padding: 20px;
-      background: #1a1a1a;
-      color: #aaa;
+      background: var(--footer-bg);
+      color: var(--footer-text);
       font-size: 13px;
+      transition: background-color 0.3s ease;
     }
 
     @media (min-width: 768px) {
@@ -384,13 +432,16 @@
   <!-- Header -->
   <header>
     <h1>📋 sitefrompdf</h1>
+    <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()">
+      <span id="themeIcon">🌙</span> <span id="themeText">डार्क</span>
+    </button>
   </header>
 
   <!-- Hero Section -->
   <section class="hero">
     <h2>सभी फ़ॉर्म्स डिजिटल रूप से भरें</h2>
     <p>ऑनलाइन ऑटो-कैलकुलेट करें या पेन से भरने के लिए खाली फ़ॉर्म डाउनलोड करें।</p>
-    
+
     <div class="features-badges">
       <span class="badge">⚡ ऑटो कैलकुलेशन</span>
       <span class="badge">📄 A4 PDF डाउनलोड</span>
@@ -411,7 +462,7 @@
   <div class="download-section">
     <div class="download-title">✍️ खाली फ़ॉर्म डाउनलोड करें (पेन से भरने के लिए):</div>
     <div class="blank-pdf-grid">
-      
+
       <!-- 1. TOUR TA -->
       <a href="pdfs/blank-tour-ta.pdf" download class="blank-pdf-chip">
         <div class="chip-left">
@@ -532,7 +583,7 @@
           </div>
           <div class="card-desc">परिवार के सदस्यों के विवरण दर्ज करने के लिए फ़ॉर्म नंबर 3.</div>
         </div>
-        <div class="card-footer-btn" style="color: #6c757d;">
+        <div class="card-footer-btn" style="color: var(--text-muted);">
           <span>उपलब्ध नहीं</span>
           <span>🔒</span>
         </div>
@@ -541,14 +592,36 @@
     </div>
   </main>
 
-    <!-- Footer -->
+  <!-- Footer -->
   <footer>
     <p>© 2026 sitefrompdf. All rights reserved.</p>
     <div style="margin-top: 10px; font-size: 12px;">
-      <a href="privacy-policy.html" style="color: #4caf50; text-decoration: none; margin-right: 15px;">Privacy Policy</a> | 
-      <a href="terms.html" style="color: #4caf50; text-decoration: none; margin-left: 15px;">Terms & Conditions</a>
+      <a href="privacy-policy.html" style="color: var(--primary-light); text-decoration: none; margin-right: 15px;">Privacy Policy</a> | 
+      <a href="terms.html" style="color: var(--primary-light); text-decoration: none; margin-left: 15px;">Terms & Conditions</a>
     </div>
   </footer>
+
+  <!-- Dark Mode Script -->
+  <script>
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      
+      document.getElementById('themeIcon').innerText = isDark ? '☀️' : '🌙';
+      document.getElementById('themeText').innerText = isDark ? 'लाइट' : 'डार्क';
+      
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+
+    // ऑटो-लोड थीम
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('themeIcon').innerText = '☀️';
+        document.getElementById('themeText').innerText = 'लाइट';
+      }
+    });
+  </script>
 
   <!-- Security Scripts -->
   <script>
@@ -574,7 +647,7 @@
       Array.from(cards).forEach(card => {
         const title = card.querySelector('.card-title').innerText.toLowerCase();
         const desc = card.querySelector('.card-desc').innerText.toLowerCase();
-        
+
         if (title.includes(input) || desc.includes(input)) {
           card.style.display = "flex";
         } else {
