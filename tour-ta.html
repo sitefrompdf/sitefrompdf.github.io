@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>TA FORM - यात्रा भत्ता बिल</title>
+
+  <!-- PWA Settings -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1b5e20">
+
+  <!-- Service Worker Register Script -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('Service Worker Registered!'))
+          .catch(err => console.log('Service Worker Registration Failed!', err));
+      });
+    }
+  </script>
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5314158636254894" crossorigin="anonymous"></script>
+
+  <!-- Google Analytics (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CH22M8QX1L"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CH22M8QX1L');
+  </script>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 5mm;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body, input, button, select, textarea, [contenteditable] {
+      font-family: Arial, sans-serif !important;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+
+    /* मुख्य हेडर (sitefrompdf) और होम बटन */
+    .site-header {
+      background: linear-gradient(135deg, #1b5e20, #2e7d32);
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .site-header h1 {
+      font-size: 18px;
+      margin: 0;
+      font-weight: 700;
+    }
+    .home-back-btn {
+      color: white;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .home-back-btn:hover {
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    .a4-page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 5mm;
+      margin: 15px auto;
+      box-sizing: border-box;
+      background-color: white;
+      border: 0px solid #ccc;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      position: relative;
+      height: auto;
+    }
+    .header-left { position: absolute; top: 6mm; left: 6mm; font-weight: normal; font-size: 14px; }
+    .sub-bill-left { position: absolute; top: 10mm; left: 6mm; font-weight: normal; font-size: 14px; }
+    .header-center { position: absolute; top: 6mm; left: 52%; transform: translateX(-50%); font-weight: normal; font-size: 14px; }
+    .header-right { position: absolute; top: 6mm; right: 6mm; font-weight: normal; font-size: 14px; }
+
+    /* Uniform dotted input style and Uppercase transformation */
+    .a4-page input[type="text"], 
+    .a4-page input[type="number"] {
+      border: none;
+      border-bottom: 1px dotted #000;
+      background: transparent;
+      outline: none;
+      font-size: 14px;
+      text-transform: uppercase;
+      font-family: Arial, sans-serif;
+    }
+
+    #customTable {
+      position: relative;
+      top: 105mm;
+      left: 0;
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    .action-buttons {
+      position: absolute; 
+      left: 2mm;
+      width: 100%; 
+      padding: 5px 0;
+      display: flex; 
+      flex-wrap: wrap;
+      justify-content: flex-start; 
+      align-items: center;
+    }
+    .action-buttons button {
+      margin-right: 8px; 
+      margin-bottom: 5px; 
+      border-radius: 4px;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+    .action-buttons button:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    [contenteditable]:empty::before { content: attr(data-placeholder); color: #999; font-style: italic; pointer-events: none; }
+    [contenteditable] { 
+      text-transform: uppercase; 
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+    }
+
+    #customTable th, #customTable td {
+      border: 0.5px solid black !important;
+      box-sizing: border-box;
+    }
+
+    #customTable td { 
+      white-space: normal; 
+      word-wrap: break-word; 
+      word-break: break-all; 
+      overflow: hidden; 
+      height: auto; 
+      text-align: center; 
+      vertical-align: middle; 
+      padding: 3px; 
+      line-height: 1.1; 
+      font-size: 12px;
+    }
+    #customTable th { font-size: 12px; padding: 2px; }
+
+    /* Column Widths Definition */
+    .col-dt-dep   { width: 13%; }
+    .col-from     { width: 14%; }
+    .col-dt-arr   { width: 13%; }
+    .col-to       { width: 14%; }
+    .col-mode     { width: 11%; }
+    .col-fare-rs  { width: 8%; }
+    .col-fare-p   { width: 5%; }
+    .col-dist     { width: 7%; }
+    .col-halt     { width: 8%; }
+    .col-purpose  { width: 7%; }
+
+    /* Date-time picker cell */
+    .date-cell {
+      position: relative;
+      padding: 0 !important;
+      cursor: pointer;
+      text-align: center;
+    }
+    .dt-display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 1px;
+      min-height: 28px;
+      line-height: 1.2;
+      color: #222;
+      user-select: none;
+      pointer-events: none;
+    }
+    .dt-display.empty {
+      color: #aaa;
+      font-style: italic;
+      font-size: 10px;
+    }
+    .dt-date {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      width: 100%;
+      text-align: center;
+      border-bottom: 0.8px solid #555;
+      padding-bottom: 2px;
+      margin-bottom: 2px;
+    }
+    .dt-time {
+      display: block;
+      font-size: 11px;
+      width: 100%;
+      text-align: center;
+    }
+    .dt-display .cal-icon {
+      display: block;
+      font-size: 14px;
+      line-height: 1;
+      margin-bottom: 1px;
+    }
+    .dt-input {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      cursor: pointer;
+      border: none !important;
+      background: transparent;
+      color: transparent;
+      caret-color: transparent;
+    }
+    .dt-input::-webkit-calendar-picker-indicator {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      margin: 0; padding: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    #cell-4-9 {
+      writing-mode: vertical-rl; 
+      transform: rotate(180deg); 
+      text-align: left;
+      padding: 10px 5px;
+    }
+
+    #customTable tr {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+
+    .total-row td {
+      font-weight: bold;
+      background-color: #f9f9f9 !important; 
+      border-bottom: 2px solid black !important; 
+    }
+
+    .a4-image-page {
+      width: 210mm;
+      height: 297mm;
+      margin: 0 auto;
+      background: white;
+      overflow: hidden;
+    }
+
+    /* Print Styles */
+    @media print {
+      body { 
+        background-color: white !important; 
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      .site-header, .action-buttons, footer, #instructionModal { 
+        display: none !important; 
+      }
+
+      .a4-page {
+        box-shadow: none !important;
+        border: none !important;
+        margin: 0 !important;
+        width: 100% !important;
+        padding: 4mm !important;
+        min-height: auto !important;
+      }
+
+      /* Hide placeholders and clear styling in print */
+      input::placeholder {
+        color: transparent !important;
+      }
+      .a4-page input[type="text"], 
+      .a4-page input[type="number"] {
+        border-bottom: 1px dotted #000 !important;
+      }
+
+      .a4-image-page {
+        page-break-before: always !important;
+        break-before: page !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        margin: 0 !important;
+        background: white !important;
+      }
+
+      #customTable {
+        width: 100% !important;
+        table-layout: fixed !important;
+        border-collapse: collapse !important;
+      }
+
+      #customTable tr {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      #customTable thead {
+        display: table-header-group !important;
+      }
+
+      .dt-input { display: none !important; }
+      .dt-display { color: #000 !important; font-style: normal !important; }
+      .dt-display.empty { display: none !important; }
+
+      [contenteditable]:empty::before {
+        content: "" !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- sitefrompdf Top Header with Home Button -->
+  <header class="site-header">
+    <h1>📋 sitefrompdf</h1>
+    <a href="index.html" class="home-back-btn">&larr; होम पेज</a>
+  </header>
+
+  <div id="instructionModal" style="
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background-color: rgba(0, 0, 0, 0.75); 
+    display: none; 
+    justify-content: center; 
+    align-items: center; 
+    z-index: 10000;
+    padding: 20px;
+  ">
+    <div style="
+      background: linear-gradient(135deg, #4caf50, #087f23);
+      padding: 30px 25px;
+      border-radius: 12px;
+      max-width: 480px;
+      width: 90%;
+      color: white;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      font-family: Arial, sans-serif;
+      text-align: left;
+    ">
+      <h2 style="margin-top: 0; font-size: 22px; font-weight: 700; text-align: center; text-shadow: 1px 1px 4px rgba(0,0,0,0.4);">फार्म भरने के निर्देश (Instructions)</h2>
+      <p style="font-size: 14px; line-height: 1.5; margin-bottom: 15px;">
+        यह यात्रा भत्ता बिल (TA Bill) फॉर्म एक इंटरैक्टिव और स्वतः सहेजने वाला टूल है।
+      </p>
+      <ul style="font-size: 14px; line-height: 1.6; padding-left: 20px; margin-bottom: 20px;">
+        <li>सभी संबंधित फ़ील्ड्स (जैसे नाम, वेतन, पद, तिथि और समय) सावधानी से भरें।</li>
+        <li>यात्रा विवरण तालिका में तारीख और समय कैलेंडर/पिकर से चुनें।</li>
+        <li>किराया (Fare) डालते ही 'कुल योग' ऑटोमैटिक अपडेट हो जाता है।</li>
+        <li>विवरण भरने के बाद <strong>'PDF डाउनलोड'</strong> बटन पर क्लिक करें।</li>
+      </ul>
+      <div style="text-align: center;">
+        <button id="closeModalButton" style="
+          padding: 12px 30px; 
+          background-color: #ffd600;
+          color: #222;
+          font-size: 14px; 
+          font-weight: 600;
+          border: none; 
+          border-radius: 6px;
+          cursor: pointer;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        ">समझ गया / OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="a4-page" id="a4Page">
+
+    <div class="header-left">उप बिल संख्या...</div>
+    <div class="sub-bill-left">Sub Bill No....</div>
+    <div style="position: absolute; top: 10mm; right: 6mm; font-weight: normal; font-size: 14px;">I.T.B.P.F Accts 001</div>
+
+    <div class="header-center">
+      AC/NO - <input type="number" maxlength="18" inputmode="numeric" style="width: 180px; height: 18px; padding: 2px 5px;" placeholder="खाता संख्या (Account No.)" />
+    </div>
+
+    <div style="position: absolute; top: 11mm; left: 50%; transform: translateX(-50%); font-weight: normal; font-size: 14px;">
+      IFSC CODE - <input type="text" maxlength="15" style="width: 150px; height: 18px; padding: 2px 5px;" placeholder="बैंक का IFSC कोड" />
+    </div>
+
+    <div style="position: absolute; top: 16mm; left: 50%; transform: translateX(-50%); font-weight: normal; font-size: 14px;">
+      VENDOR ID - <input type="text" maxlength="15" style="width: 165px; height: 18px; padding: 2px 5px;" placeholder="वेंडर आई.डी. (Vendor ID)" />
+    </div>
+
+    <div style="position: absolute; top: 23mm; left: 50%; transform: translateX(-50%); text-align: center; font-weight: bold;">
+      <div style="font-size: 20px;">दौरे के लिये यात्रा भत्ता बिल</div>
+      <div style="font-size: 16px; margin-top: 1px;">TRAVELLING ALLOWANCE BILL FOR TOUR</div>
+    </div>
+
+    <div class="header-right">भा.ति.सी.पु.बल.लेखा001</div>
+
+    <div style="position: absolute; top: 37mm; left: 6mm; font-weight: normal; font-size: 12px; line-height: 1.4;">
+      टिप्पणी- इस बिल की दो प्रतियों में, एक संदाय के लिये और दूसरी कार्यालय प्रति के रूप में तैयार किया जाना चाहिये |<br />
+      Note- This bill should be prepared in duplicate, one for payment and the other as office copy.
+    </div>
+
+    <div style="position: absolute; top: 47mm; left: 50%; transform: translateX(-50%); font-weight: bold; font-size: 15px; text-align: center;">
+      भाग-क (सरकारी सेवक द्वारा भरा जाना है)<br />
+      PART-A (To be filled up by Government Servant)
+    </div>
+
+    <div style="position: absolute; top: 60mm; left: 6mm; width: 88%; font-size: 14px;">
+      <div style="position: absolute; top: 2mm; left: 0mm;line-height:0.8;">
+        1.&nbsp;नाम<br>
+        NAME -
+        <input type="text" maxlength="30" style="width: 300px; height: 18px; padding: 2px 5px; font-weight: normal;" placeholder="पूरा नाम (Full Name)" />
+      </div>
+
+      <div style="position: absolute; top: 1mm; left: 400px;line-height:0.8;">
+        2.दल संख्या<br />
+        Regimental No -
+        <input type="text" maxlength="9" class="regimental-no" inputmode="numeric" style="width: 120px; font-weight: bold; height: 18px; padding: 2px 5px; text-align: left;" oninput="this.value=this.value.replace(/[^0-9]/g,'');" placeholder="(e.g.123456789)" />
+      </div>
+    </div>
+
+    <div style="position: absolute; top: 71mm; left: 6mm; width: 88%; font-size: 14px;">
+      <div style="position: absolute; top: 0mm; left: 0mm;line-height:0.8;">
+        3.&nbsp; पद<br />Designation -
+        <input type="text" maxlength="15" style="width: 120px; height: 18px; padding: 2px 5px;" placeholder="पद Rank/Post" />
+      </div>
+      <div style="position: absolute; top: 1mm;line-height:0.9; left: 80mm;">
+        कंपनी<br>COY -
+        <input type="text" maxlength="10" style="width: 116px; height: 18px; padding: 2px 5px;" placeholder="ADM" />
+      </div>
+      <div style="position: absolute; top: 11mm; left: 0mm;line-height:0.8;">
+        4.&nbsp;वेतन<br />&nbsp;&nbsp;&nbsp;PAY -
+        <input type="number" maxlength="10" inputmode="numeric" style="width: 110px; height: 18px; padding: 2px 5px;" placeholder="₹ 00000" />
+      </div>
+
+      <div style="position: absolute; top: 11mm;line-height:0.9; left: 50mm;">
+        लेवल<br />LEVEL -
+        <input type="number" maxlength="2" inputmode="numeric" style="width: 60px; height: 18px; padding: 2px 5px;" placeholder="01-18" />
+      </div>
+
+      <div style="position: absolute; top: 20mm; left: 0mm; width: 750px; font-weight: normal; font-size: 14px; display: flex; align-items: center;">
+        <label for="headquarters" style="margin-right: 10px; font-size: 14px;">5.मुख्यालय/Headquarters</label>
+        <input type="text" id="headquarters" maxlength="100" style="flex-grow: 1; height:20px; padding: 2px 5px;" placeholder="वर्तमान मुख्यालय का नाम" />
+      </div>
+
+      <div style="position: absolute; top: 26mm; left: 0mm; width: 750px; font-weight: normal; font-size: 12px; display: flex; align-items: center;">
+        <label for="info" style="margin-right: 5px;">
+          <p style="font-size: 11px; margin: 0 0 2px 0;">की गई यात्रा/यात्राओं के व्यौरे और प्रयोजन:<br>Details and purpose of journey(s) performed.</p>
+        </label>
+        <input type="text" id="info" maxlength="100" style="width: 100%; height: 25px; padding: 2px 5px; box-sizing: border-box;" placeholder="उद्देश्य और गंतव्य ( Purpose & Destination)" />
+      </div>
+    </div>
+
+    <table id="customTable">
+      <colgroup>
+        <col class="col-dt-dep">
+        <col class="col-from">
+        <col class="col-dt-arr">
+        <col class="col-to">
+        <col class="col-mode">
+        <col class="col-fare-rs">
+        <col class="col-fare-p">
+        <col class="col-dist">
+        <col class="col-halt">
+        <col class="col-purpose">
+      </colgroup>
+      <thead>
+        <tr>
+          <th colspan="2">प्रस्थान</th>
+          <th colspan="2">आगमन</th>
+          <th rowspan="3">यात्रा की एवं<br>स्थान सुविधा का वर्ग</th>
+          <th colspan="2" rowspan="2">सदत्त यात्री भाड़ा</th>
+          <th rowspan="3">सड़क मील<br>भत्ता के लिए<br>दूरी कि. मी. में</th>
+          <th rowspan="3">विश्राम की अवधि</th>
+          <th rowspan="3" style="writing-mode: vertical-rl; transform: rotate(180deg); text-align: center;">
+            यात्रा का प्रयोजन
+          </th>
+        </tr>
+        <tr>
+          <th rowspan="2">तारीख और<br>समय</th>
+          <th rowspan="2">कहा से</th>
+          <th rowspan="2">तारीख और<br>समय</th>
+          <th rowspan="2">कहा तक</th>
+        </tr>
+        <tr>
+          <th>Rs.</th>
+          <th>p.</th>
+        </tr>
+      </thead>
+
+      <tbody id="tableBody">
+        <tr id="initial-travel-row" data-row-type="travel">
+          <td class="date-cell">
+            <span class="dt-display empty"><span class="cal-icon">📅</span>तारीख/समय</span>
+            <input type="datetime-local" class="dt-input" title="प्रस्थान तारीख और समय चुनें">
+          </td>
+          <td contenteditable="true" data-placeholder="स्थान (From)"></td>
+          <td class="date-cell">
+            <span class="dt-display empty"><span class="cal-icon">📅</span>तारीख/समय</span>
+            <input type="datetime-local" class="dt-input" title="आगमन तारीख और समय चुनें">
+          </td>
+          <td contenteditable="true" data-placeholder="स्थान (To)"></td>
+          <td contenteditable="true" data-placeholder="Mode"></td>
+          <td contenteditable="true" colspan="2" data-placeholder="₹" inputmode="decimal"></td>
+          <td contenteditable="true" data-placeholder="km" inputmode="numeric"></td>
+          <td contenteditable="true" data-placeholder="Halt"></td>
+          <td id="cell-4-9" contenteditable="true" rowspan="1" style="vertical-align: middle;"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="action-buttons" id="actionButtons" style="top: 105mm;"> 
+      <button id="addTravelRow" style="font-size: 13px; padding: 5px 10px; cursor: pointer; background-color: #2196F3; color: white; border: none;">➕ यात्रा विवरण</button>
+      <button id="addMergedRow" style="font-size: 13px; padding: 5px 10px; cursor: pointer; background-color: #9C27B0; color: white; border: none;">➕ विश्राम/हॉल्ट</button>
+      <button id="addTotalRow" style="font-size: 13px; padding: 5px 10px; cursor: pointer; background-color: #3f51b5; color: white; border: none;">कुल योग जोड़ें</button>
+      <button id="deleteLastRow" style="font-size: 13px; padding: 5px 10px; cursor: pointer; background-color: #f44336; color: white; border: none;">🗑 आखिरी रो हटाएँ</button>
+      <button id="clearForm" style="font-size: 13px; padding: 5px 10px; cursor: pointer; background-color: #ff6f00; color: white; border: none;">✖ फॉर्म साफ करें</button>
+      <button id="downloadPdf" style="font-size: 13px; padding: 5px 12px; cursor: pointer; background-color: #4CAF50; color: white; border: none;">⬇️ PDF डाउनलोड</button>
+      <span id="saveStatus" style="font-size: 11px; color: #555; margin-left: 6px; font-style: italic;"></span>
+    </div>
+  </div>
+
+  <div class="a4-image-page">
+    <img src="images/img1.jpeg" style="width: 210mm; height: 297mm; object-fit: cover; display: block;" alt="Image 1" />
+  </div>
+
+  <div class="a4-image-page">
+    <img src="images/img2.jpeg" style="width: 210mm; height: 297mm; object-fit: cover; display: block;" alt="Image 2" />
+  </div>
+
+  <div class="a4-image-page">
+    <img src="images/img3.jpg" style="width: 210mm; height: 297mm; object-fit: cover; display: block;" alt="Image 3" />
+  </div>
+
+<script>
+  const SAVE_KEY      = 'ta-bill-draft';
+  const RECENT_KEY    = 'ta-bill-recent';
+  const MM_TO_PX      = 3.779527559;
+
+  const table         = document.getElementById('customTable');
+  const tableBody     = document.getElementById('tableBody');
+  const actionButtons = document.getElementById('actionButtons');
+  const a4Page        = document.getElementById('a4Page');
+  const saveStatus    = document.getElementById('saveStatus');
+
+  const DATE_CELL_HTML = (title) =>
+    `<td class="date-cell">` +
+      `<span class="dt-display empty"><span class="cal-icon">📅</span>तारीख/समय</span>` +
+      `<input type="datetime-local" class="dt-input" title="${title}">` +
+    `</td>`;
+
+  const travelRowHTML = () =>
+    `<tr data-deletable="true" data-row-type="travel">` +
+      DATE_CELL_HTML('प्रस्थान तारीख और समय') +
+      `<td contenteditable="true" data-placeholder="स्थान (From)"></td>` +
+      DATE_CELL_HTML('आगमन तारीख और समय') +
+      `<td contenteditable="true" data-placeholder="स्थान (To)"></td>` +
+      `<td contenteditable="true" data-placeholder="Mode/Class"></td>` +
+      `<td contenteditable="true" colspan="2" data-placeholder="₹" inputmode="decimal"></td>` +
+      `<td contenteditable="true" data-placeholder="km" inputmode="numeric"></td>` +
+      `<td contenteditable="true" data-placeholder="Halt"></td>` +
+    `</tr>`;
+
+  const mergedRowHTML =
+    `<tr data-deletable="true" data-row-type="halt">` +
+      `<td colspan="9" contenteditable="true" ` +
+        `style="text-align:left;vertical-align:top;padding:2px;height:22px;" ` +
+        `data-placeholder="विश्राम का स्थान और अवधि / Place and Duration of Halt">` +
+      `</td>` +
+    `</tr>`;
+
+  const totalRowHTML = (amt) =>
+    `<tr data-row-type="total" class="total-row">` +
+      `<td colspan="5" style="text-align:right;border-right:none!important;font-weight:bold;padding-right:10px;">कुल योग / Total:</td>` +
+      `<td colspan="2" id="liveTotal" style="text-align:center;border-left:none!important;font-weight:bold;color:#000;">₹ ${amt.toFixed(2)}</td>` +
+      `<td colspan="3" style="text-align:center;"></td>` +
+    `</tr>`;
+
+  function updatePurposeRowspan() {
+    const purposeCell = document.getElementById('cell-4-9');
+    if (purposeCell) {
+      // केवल यात्रा और हॉल्ट पंक्तियों को गिनें (Total Row को छोड़ कर)
+      const validRows = tableBody.querySelectorAll('tr[data-row-type="travel"], tr[data-row-type="halt"]').length;
+      purposeCell.rowSpan = Math.max(1, validRows);
+    }
+  }
+
+  function updateLayout() {
+    updatePurposeRowspan();
+    const newTop = table.offsetTop + table.offsetHeight + 10;
+    actionButtons.style.top = `${newTop}px`;
+    const needed = newTop + actionButtons.offsetHeight + 20;
+    a4Page.style.minHeight = `${Math.max(needed, 297 * MM_TO_PX)}px`;
+  }
+
+  function formatDT(isoVal) {
+    const d = new Date(isoVal);
+    if (isNaN(d.getTime())) return null;
+    return {
+      date: ("0"+d.getDate()).slice(-2)+"."+("0"+(d.getMonth()+1)).slice(-2)+"."+d.getFullYear().toString().slice(-2),
+      time: ("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)
+    };
+  }
+
+  function localISOString(d) {
+    const p = n => String(n).padStart(2,'0');
+    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+  }
+
+  function setDateLimits() {
+    const now        = new Date();
+    const oneYearAgo = new Date(now.getTime() - 365*24*60*60*1000);
+    const maxStr = localISOString(now);
+    const minStr = localISOString(oneYearAgo);
+    table.querySelectorAll('.dt-input').forEach(inp => { inp.min = minStr; inp.max = maxStr; });
+  }
+
+  table.addEventListener('click', function(e) {
+    const cell = e.target.closest('.date-cell');
+    if (!cell) return;
+    const inp = cell.querySelector('.dt-input');
+    if (!inp) return;
+    try { inp.showPicker(); } catch(err) { inp.click(); }
+  });
+
+  table.addEventListener('change', function(e) {
+    if (!e.target.classList.contains('dt-input') || !e.target.value) return;
+    const disp  = e.target.previousElementSibling;
+    const parts = formatDT(e.target.value);
+    if (parts && disp) {
+      disp.innerHTML = `<span class="dt-date">${parts.date}</span><span class="dt-time">${parts.time}</span>`;
+      disp.classList.remove('empty');
+    }
+    debouncedSave();
+  });
+
+  function calculateTotal() {
+    let total = 0;
+    table.querySelectorAll('tr[data-row-type="travel"]').forEach(row => {
+      const cell = row.cells[5];
+      if (cell) {
+        const val = parseFloat(cell.textContent.replace(/[^0-9.]/g,'')) || 0;
+        total += val;
+      }
+    });
+    return total;
+  }
+
+  function updateLiveTotal() {
+    const liveEl = document.getElementById('liveTotal');
+    if (liveEl) {
+      liveEl.textContent = '₹ ' + calculateTotal().toFixed(2);
+    }
+  }
+
+  function restrictNumberInput(cell) {
+    if (cell.__numRestricted) return;
+    cell.__numRestricted = true;
+
+    cell.addEventListener('input', function() {
+      let t = this.textContent.replace(/[^0-9.]/g,'');
+      const p = t.split('.');
+      if (p.length > 2) t = p[0]+'.'+p.slice(1).join('');
+
+      if (this.textContent !== t) {
+        this.textContent = t;
+        const sel = window.getSelection(), r = document.createRange();
+        if (this.firstChild) { r.setStart(this.firstChild, t.length); r.collapse(true); sel.removeAllRanges(); sel.addRange(r); }
+      }
+      updateLiveTotal();
+      debouncedSave();
+    });
+  }
+
+  let saveTimer;
+  function debouncedSave() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveFormData, 800);
+  }
+
+  function saveFormData() {
+    try {
+      const state = { tableBodyHTML: tableBody.innerHTML, inputs: {} };
+      document.querySelectorAll('.a4-page input:not(.dt-input)').forEach(inp => {
+        const k = inp.placeholder || inp.title || inp.id;
+        if (k) state.inputs[k] = inp.value;
+      });
+      localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+
+      const nameEl  = document.querySelector('input[placeholder="पूरा नाम (Full Name)"]');
+      const regEl   = document.querySelector('.regimental-no');
+      localStorage.setItem(RECENT_KEY, JSON.stringify({
+        lastSaved : Date.now(),
+        form      : 'ta-bill',
+        path      : '/ta-bill.html',
+        title     : 'यात्रा भत्ता बिल (TA Bill)',
+        name      : nameEl ? nameEl.value.trim() : '',
+        regNo     : regEl  ? regEl.value.trim()  : ''
+      }));
+
+      if (saveStatus) {
+        const t = new Date();
+        saveStatus.textContent = `✔ ${("0"+t.getHours()).slice(-2)}:${("0"+t.getMinutes()).slice(-2)} पर सहेजा गया`;
+      }
+    } catch(err) { console.error('Save failed', err); }
+  }
+
+  function loadFormData() {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    try {
+      const state = JSON.parse(raw);
+      if (state.tableBodyHTML) {
+        tableBody.innerHTML = state.tableBodyHTML;
+        tableBody.querySelectorAll('td[data-placeholder="₹"]').forEach(restrictNumberInput);
+      }
+      if (state.inputs) {
+        document.querySelectorAll('.a4-page input:not(.dt-input)').forEach(inp => {
+          const k = inp.placeholder || inp.title || inp.id;
+          if (k && state.inputs[k] != null) inp.value = state.inputs[k];
+        });
+      }
+      updateLayout();
+      updateLiveTotal();
+      if (saveStatus) saveStatus.textContent = '📂 पिछला डेटा लोड हुआ';
+    } catch(err) { console.error('Load failed', err); }
+  }
+
+  document.addEventListener('input', function(e) {
+    if (e.target.closest('.a4-page')) debouncedSave();
+  });
+
+  document.getElementById('addTravelRow').addEventListener('click', function() {
+    const travelRows = table.querySelectorAll('tr[data-row-type="travel"]');
+    let lastTo = '';
+    if (travelRows.length > 0) {
+      const lastRow = travelRows[travelRows.length - 1];
+      const toCell  = lastRow.cells[3];
+      lastTo = toCell ? toCell.textContent.trim() : '';
+    }
+
+    const tmp = document.createElement('tbody');
+    tmp.innerHTML = travelRowHTML();
+    const newTr = tmp.firstElementChild;
+
+    const existingTotal = tableBody.querySelector('tr[data-row-type="total"]');
+    if (existingTotal) {
+      tableBody.insertBefore(newTr, existingTotal);
+    } else {
+      tableBody.appendChild(newTr);
+    }
+
+    if (lastTo) {
+      if (newTr.cells[1]) newTr.cells[1].textContent = lastTo;
+    }
+
+    const fareCell = newTr.querySelector('td[data-placeholder="₹"]');
+    if (fareCell) restrictNumberInput(fareCell);
+    setDateLimits();
+
+    updateLayout();
+    updateLiveTotal();
+    debouncedSave();
+    newTr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  document.getElementById('addMergedRow').addEventListener('click', function() {
+    const tmp = document.createElement('tbody');
+    tmp.innerHTML = mergedRowHTML;
+    const newTr = tmp.firstElementChild;
+
+    const existingTotal = tableBody.querySelector('tr[data-row-type="total"]');
+    if (existingTotal) {
+      tableBody.insertBefore(newTr, existingTotal);
+    } else {
+      tableBody.appendChild(newTr);
+    }
+
+    updateLayout();
+    debouncedSave();
+  });
+
+  document.getElementById('addTotalRow').addEventListener('click', function() {
+    let existing = tableBody.querySelector('tr[data-row-type="total"]');
+    if (!existing) {
+      const tmp = document.createElement('tbody');
+      tmp.innerHTML = totalRowHTML(calculateTotal());
+      tableBody.appendChild(tmp.firstElementChild);
+    } else {
+      updateLiveTotal();
+    }
+    updateLayout();
+    debouncedSave();
+  });
+
+  document.getElementById('deleteLastRow').addEventListener('click', function() {
+    const rows = Array.from(tableBody.rows);
+    const deletableRows = rows.filter(r => r.dataset.deletable === "true");
+    if (deletableRows.length === 0) {
+      alert('शुरुआती यात्रा विवरण रो को हटाया नहीं जा सकता।');
+      return;
+    }
+    deletableRows[deletableRows.length - 1].remove();
+    updateLayout();
+    updateLiveTotal();
+    debouncedSave();
+  });
+
+  document.getElementById('clearForm').addEventListener('click', function() {
+    if (!confirm('क्या आप सभी भरा हुआ डेटा साफ करना चाहते हैं?\nयह कार्य पूर्ववत नहीं किया जा सकता।')) return;
+
+    table.querySelectorAll('tr[data-deletable="true"], tr[data-row-type="total"]').forEach(r => r.remove());
+
+    table.querySelectorAll('.dt-input').forEach(inp => inp.value = '');
+    table.querySelectorAll('.dt-display').forEach(disp => {
+      disp.innerHTML = '<span class="cal-icon">📅</span>तारीख/समय';
+      disp.classList.add('empty');
+    });
+
+    table.querySelectorAll('[contenteditable]').forEach(el => el.innerHTML = '');
+    document.querySelectorAll('.a4-page input:not(.dt-input)').forEach(inp => inp.value = '');
+
+    localStorage.removeItem(SAVE_KEY);
+    localStorage.removeItem(RECENT_KEY);
+    if (saveStatus) saveStatus.textContent = '🗑 फॉर्म साफ हुआ';
+
+    updateLayout();
+  });
+
+  document.getElementById('downloadPdf').addEventListener('click', function() {
+    saveFormData();
+    window.print();
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const modal       = document.getElementById('instructionModal');
+    const closeButton = document.getElementById('closeModalButton');
+    modal.style.display = 'flex';
+
+    closeButton.addEventListener('click', function() {
+      modal.style.display = 'none';
+      loadFormData();
+      updateLayout();
+      setDateLimits();
+      window.addEventListener('resize', updateLayout);
+    });
+
+    tableBody.querySelectorAll('td[data-placeholder="₹"]').forEach(restrictNumberInput);
+    setDateLimits();
+  });
+</script>
+
+</body>
+</html>
