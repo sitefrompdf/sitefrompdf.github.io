@@ -13,7 +13,7 @@
 
   <!-- Banner Image Details -->
   <meta property="og:image" content="https://sitefrompdf.github.io/images/banner.jpg" />
-  <meta property="og:image:type" content="image/jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
   <meta property="og:image:width" content="848" />
   <meta property="og:image:height" content="1264" />
 
@@ -56,6 +56,7 @@
       --chip-bg: #ffffff;
       --chip-border: #c8e6c9;
       --chip-text: #1b5e20;
+      --chip-active-bg: #e8f5e9;
       --input-bg: #ffffff;
     }
 
@@ -69,6 +70,7 @@
       --chip-bg: #2a2a2a;
       --chip-border: #2e7d32;
       --chip-text: #81c784;
+      --chip-active-bg: #1b5e20;
       --input-bg: #2a2a2a;
     }
 
@@ -91,18 +93,7 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      -khtml-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
       transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    input, textarea {
-      -webkit-user-select: text !important;
-      user-select: text !important;
     }
 
     /* Header */
@@ -256,7 +247,7 @@
     }
 
     .blank-pdf-chip:active {
-      background: #e8f5e9;
+      background: var(--chip-active-bg);
     }
 
     .chip-left {
@@ -404,6 +395,15 @@
       font-weight: 600;
     }
 
+    .no-result-msg {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 30px 10px;
+      color: var(--text-muted);
+      font-size: 15px;
+      font-weight: 600;
+    }
+
     footer {
       text-align: center;
       padding: 20px;
@@ -451,6 +451,7 @@
     <div class="share-container">
       <a href="https://api.whatsapp.com/send?text=सरकारी%20फ़ॉर्म्स%20(Tour%20TA,%20Transfer%20TA,%20LTC,%20CEA)%20डिजिटल%20रूप%20से%20ऑटो-कैलकुलेट%20करके%20भरें%20या%20खाली%20PDF%20डाउनलोड%20करें:%20https://sitefrompdf.github.io/" 
          target="_blank" 
+         rel="noopener"
          class="whatsapp-btn">
         💬 दोस्तों/ग्रुप में शेयर करें
       </a>
@@ -562,7 +563,7 @@
         <div>
           <div class="card-header">
             <div class="card-icon">🎓</div>
-            <div class="card-title">5. CEA FORM</div>
+            <div class="card-title">4. CEA FORM</div>
           </div>
           <div class="card-desc">बच्चों की शिक्षा भत्ता (Children Education Allowance) का दावा फ़ॉर्म।</div>
         </div>
@@ -578,7 +579,7 @@
         <div>
           <div class="card-header">
             <div class="card-icon">📋</div>
-            <div class="card-title">4. FORM NO. 3</div>
+            <div class="card-title">5. FORM NO. 3</div>
           </div>
           <div class="card-desc">परिवार के सदस्यों के विवरण दर्ज करने के लिए फ़ॉर्म नंबर 3.</div>
         </div>
@@ -600,29 +601,15 @@
     </div>
   </footer>
 
-  <!-- Security Scripts -->
+  <!-- Scripts -->
   <script>
-    document.addEventListener('contextmenu', function(e) {
-      e.preventDefault();
-    });
-
-    document.onkeydown = function(e) {
-      if (e.keyCode == 123) return false;
-      if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
-      if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
-      if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
-      if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
-    };
-  </script>
-
-  <!-- Dark Mode Toggle Script -->
-  <script>
+    // Dark Mode Toggle Script
     function toggleTheme() {
       const body = document.body;
       const btn = document.getElementById('themeToggleBtn');
-      
+
       body.classList.toggle('dark-mode');
-      
+
       if (body.classList.contains('dark-mode')) {
         btn.innerHTML = '☀️ लाइट मोड';
         localStorage.setItem('theme', 'dark');
@@ -632,23 +619,23 @@
       }
     }
 
-    // पेज लोड होने पर यूजर की पिछली पसंद याद रखने के लिए
+    // Restore Theme State on Load
     window.addEventListener('DOMContentLoaded', () => {
       const savedTheme = localStorage.getItem('theme');
       const btn = document.getElementById('themeToggleBtn');
-      
+
       if (savedTheme === 'dark') {
         document.body.classList.add('dark-mode');
         if (btn) btn.innerHTML = '☀️ लाइट मोड';
       }
     });
-  </script>
 
-  <!-- Search Filter Script -->
-  <script>
+    // Smart Search Filter Script with "No Result" Message
     function filterForms() {
       const input = document.getElementById('searchInput').value.toLowerCase();
       const cards = document.getElementsByClassName('form-card');
+      const formsGrid = document.getElementById('formsGrid');
+      let visibleCount = 0;
 
       Array.from(cards).forEach(card => {
         const title = card.querySelector('.card-title').innerText.toLowerCase();
@@ -656,31 +643,26 @@
 
         if (title.includes(input) || desc.includes(input)) {
           card.style.display = "flex";
+          visibleCount++;
         } else {
           card.style.display = "none";
         }
       });
+
+      // Handle "No Result Found" message dynamically
+      let noResultMsg = document.getElementById('noResultMsg');
+      if (visibleCount === 0) {
+        if (!noResultMsg) {
+          noResultMsg = document.createElement('div');
+          noResultMsg.id = 'noResultMsg';
+          noResultMsg.className = 'no-result-msg';
+          noResultMsg.innerHTML = '❌ आपके द्वारा खोजा गया फ़ॉर्म नहीं मिला।';
+          formsGrid.appendChild(noResultMsg);
+        }
+      } else if (noResultMsg) {
+        noResultMsg.remove();
+      }
     }
-  </script>
-
-  <!-- Auto Save Feature Script -->
-  <script>
-    document.querySelectorAll('input, textarea, select').forEach(element => {
-      element.addEventListener('input', () => {
-        if (element.id || element.name) {
-          localStorage.setItem(element.id || element.name, element.value);
-        }
-      });
-    });
-
-    window.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('input, textarea, select').forEach(element => {
-        const savedValue = localStorage.getItem(element.id || element.name);
-        if (savedValue !== null) {
-          element.value = savedValue;
-        }
-      });
-    });
   </script>
 </body>
 </html>
