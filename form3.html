@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form 3 - Details of Family</title>
+    <!-- PWA Settings -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1b5e20">
+
+  <!-- Service Worker Register Script -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('Service Worker Registered!'))
+          .catch(err => console.log('Service Worker Registration Failed!', err));
+      });
+    }
+  </script>
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5314158636254894" crossorigin="anonymous"></script>
+
+  <!-- Google Analytics (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CH22M8QX1L"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CH22M8QX1L');
+  </script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #5c7b9c;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* A4 Page Container */
+        .a4-page {
+            background-color: #ffffff;
+            width: 210mm;
+            min-height: 297mm;
+            padding: 12mm 15mm 15mm 25mm;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            color: #000;
+            margin-bottom: 25px;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .fillable-red {
+            color: #000000;
+            border: none;
+            border-bottom: 1px dotted #000000;
+            outline: none;
+            background: transparent;
+            font-size: 13px;
+        }
+
+        .fillable-red::placeholder {
+            color: #757575;
+            font-style: normal;
+        }
+
+        /* Labels layout: Hindi on top, English on bottom */
+        .field-label {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .lbl-hi {
+            font-size: 13.5px;
+            font-weight: normal;
+            display: block;
+            color: #000;
+        }
+        .lbl-en {
+            font-size: 11.5px;
+            color: #444;
+            display: block;
+            font-style: normal;
+        }
+
+        .form-row {
+            margin-top: 10px;
+            display: flex;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .title-section {
+            text-align: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #000;
+            padding-bottom: 8px;
+        }
+
+        .title-section h2 {
+            margin: 0;
+            font-size: 18px;
+            text-transform: uppercase;
+        }
+
+        .title-section h3 {
+            margin: 2px 0 0 0;
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        .title-section .rule-tag {
+            font-size: 12px;
+            font-weight: normal;
+            margin-top: 4px;
+        }
+
+        .btn-action {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            font-size: 12.5px;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            white-space: nowrap;
+            font-weight: bold;
+        }
+
+        .btn-print {
+            background-color: #007bff;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .external-btn-group {
+            display: flex;
+            gap: 5px;
+            margin: 5px 0;
+            justify-content: center;
+        }
+
+        .page-badge {
+            position: absolute;
+            bottom: 5mm;
+            right: 10mm;
+            font-size: 11px;
+            color: #888;
+        }
+
+        /* Table Input Styles */
+        .table-input, .table-select {
+            width: 100%;
+            text-align: center;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 12px;
+            padding: 3px 0;
+            color: #000;
+        }
+
+        .table-select {
+            cursor: pointer;
+            text-align-last: center;
+        }
+
+        .table-input:focus, .table-select:focus {
+            border-bottom: 1px dotted #000;
+        }
+
+        .name-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .name-input-hi {
+            border-bottom: 1px dashed #ccc;
+        }
+
+        .family-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .family-table th, .family-table td {
+            border: 1px solid #000;
+            padding: 5px 4px;
+            vertical-align: middle;
+        }
+
+        .family-table th {
+            background-color: #ffffff;
+        }
+
+        .date-picker-input {
+            border: none;
+            border-bottom: 1px dotted #000;
+            background: transparent;
+            font-size: 12px;
+            padding: 2px;
+            outline: none;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .other-rel-input {
+            margin-top: 3px;
+            border-bottom: 1px dotted #000;
+            display: none;
+        }
+
+        .undertaking-text {
+            font-size: 11px;
+            line-height: 1.3;
+            margin-top: 10px;
+            text-align: justify;
+        }
+
+        .note-box {
+            margin-top: 15px;
+            border-top: 1px dashed #000;
+            padding-top: 8px;
+            font-size: 11px;
+            line-height: 1.4;
+            text-align: justify;
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+
+            body {
+                background-color: #ffffff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .a4-page {
+                box-shadow: none !important;
+                width: 210mm !important;
+                min-height: 297mm !important;
+                margin: 0 auto !important;
+                padding: 12mm 15mm 15mm 25mm !important;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            input::placeholder,
+            textarea::placeholder {
+                color: transparent !important;
+                opacity: 0 !important;
+            }
+
+            .fillable-red, .date-picker-input, .table-select {
+                border: none !important;
+                border-bottom: 1px dashed #666 !important;
+                appearance: none;
+                -webkit-appearance: none;
+            }
+
+            /* यदि ड्रॉपडाउन खाली/अनसेलेक्टेड है या 'अन्य' चुना गया है तो प्रिंट में ड्रॉपडाउन छुपाएं */
+            .table-select:invalid, 
+            .table-select[data-empty="true"],
+            .hide-on-print {
+                display: none !important;
+            }
+
+            input[type="date"]::-webkit-calendar-picker-indicator {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<form id="form3">
+    <div class="a4-page" id="page1">
+
+        <!-- Top Header / Title Section -->
+        <div class="title-section">
+            <h2>फॉर्म - 3 / FORM - 3</h2>
+            <div class="rule-tag">देखें नियम 54 (12) / SEE RULES 54 (12)</div>
+            <h3 style="margin-top: 5px; font-weight: normal;">कुटुंब के सदस्यों की विशिष्टियां / DETAILS OF FAMILY</h3>
+        </div>
+
+        <!-- Form Fields -->
+        <div style="margin-top: 5px;">
+
+            <!-- Field 1 -->
+            <div class="form-row">
+                <div class="field-label">
+                    <span class="lbl-hi">1. सरकारी सेवक का नाम</span>
+                    <span class="lbl-en">1. Name of Govt. Servant</span>
+                </div>
+                <span style="font-weight:bold;">:</span>
+                <input type="text" id="govt_servant_name" class="fillable-red save-field" style="flex: 1; text-transform: uppercase; margin-left: 5px;" placeholder="पूरा नाम दर्ज करें / Enter Full Name" />
+            </div>
+
+            <!-- Field 2 -->
+            <div class="form-row">
+                <div class="field-label">
+                    <span class="lbl-hi">2. दल संख्या / पद</span>
+                    <span class="lbl-en">2. Regt. No / Designation</span>
+                </div>
+                <span style="font-weight:bold;">&nbsp;:</span>
+                <input type="text" id="designation" class="fillable-red save-field" style="flex: 1; text-transform: uppercase; margin-left: 5px;" placeholder="दल संख्या / पद (Regt. No / Designation)" />
+            </div>
+
+            <!-- Field 3 -->
+            <div class="form-row">
+                <div class="field-label">
+                    <span class="lbl-hi">3. जन्म तिथि</span>
+                    <span class="lbl-en">3. Date of Birth</span>
+                </div>
+                <span style="font-weight:bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
+                <input type="text" id="dob" class="date-picker-input save-field" style="width: 160px; margin-left: 5px;" onfocus="activateDatePicker(this)" onblur="deactivateDatePicker(this)" placeholder="" />
+            </div>
+
+            <!-- Field 4 -->
+            <div class="form-row">
+                <div class="field-label">
+                    <span class="lbl-hi">4. नियुक्ति की तारीख</span>
+                    <span class="lbl-en">4. Date of Appointment</span>
+                </div>
+                <span style="font-weight:bold;">&nbsp;&nbsp;&nbsp;&nbsp;:</span>
+                <input type="text" id="doa" class="date-picker-input save-field" style="width: 160px; margin-left: 5px;" onfocus="activateDatePicker(this)" onblur="deactivateDatePicker(this)" placeholder="" />
+            </div>
+
+            <!-- Field 5 -->
+            <div class="form-row">
+                <div class="field-label">
+                    <span class="lbl-hi">5. तिथि को कुटुंब के सदस्यों का विवरण</span>
+                    <span class="lbl-en">5. Details of family Members as on</span>
+                </div>
+                <span style="font-weight:bold;">:</span>
+                <input type="text" id="details_as_on" class="date-picker-input save-field" style="width: 160px; margin-left: 5px;" onfocus="activateDatePicker(this)" onblur="deactivateDatePicker(this)" placeholder="" />
+            </div>
+
+        </div>
+
+        <!-- Buttons Bar -->
+        <div class="external-btn-group no-print">
+            <button type="button" class="btn-action btn-print" onclick="window.print()">🖨️ प्रिंट करें (Print Form)</button>
+            <button type="button" class="btn-action" onclick="addFamilyRow()">पंक्ति जोड़ें (Add Row)</button>
+            <button type="button" class="btn-action btn-danger" onclick="removeFamilyRow()">पंक्ति हटाएं (Delete Row)</button>
+            <button type="button" class="btn-action btn-warning" onclick="resetForm()">🔄 रीसेट करें (Reset Form)</button>
+        </div>
+
+        <!-- Family Table -->
+        <table id="familyTable" class="family-table">
+            <thead>
+                <tr>
+                    <th style="width: 8%;">
+                        <span class="lbl-hi">क्र. सं.</span>
+                        <span class="lbl-en">Sl. No.</span>
+                    </th>
+                    <th style="width: 37%;">
+                        <span class="lbl-hi">कुटुंब के सदस्य का नाम</span>
+                        <span class="lbl-en">Name of the member of family</span>
+                    </th>
+                    <th style="width: 18%;">
+                        <span class="lbl-hi">जन्म तिथि</span>
+                        <span class="lbl-en">Date of Birth</span>
+                    </th>
+                    <th style="width: 22%;">
+                        <span class="lbl-hi">सरकारी सेवक से संबंध</span>
+                        <span class="lbl-en">Relationship with Govt.</span>
+                    </th>
+                    <th style="width: 15%;">
+                        <span class="lbl-hi">कार्यालय अध्यक्ष के हस्ताक्षर </span>
+                        <span class="lbl-en">Initial of Head of Office</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="familyTbody">
+                <!-- Row 1 -->
+                <tr>
+                    <td>1</td>
+                    <td>
+                        <div class="name-container">
+                            <input type="text" class="table-input name-input-hi save-field" placeholder="सदस्य का नाम (हिंदी में)" />
+                            <input type="text" class="table-input save-field" style="text-transform: uppercase;" placeholder="Name (in English)" />
+                        </div>
+                    </td>
+                    <td><input type="text" class="date-picker-input save-field" style="width: 95%;" onfocus="activateDatePicker(this)" onblur="deactivateDatePicker(this)" placeholder="" /></td>
+                    <td>
+                        <select class="table-select save-field rel-select" data-empty="true" onchange="toggleOtherRelInput(this)">
+                            <option value="">-- चुनें / Select --</option>
+                            <option value="पत्नी / Wife">पत्नी / Wife</option>
+                            <option value="पति / Husband">पति / Husband</option>
+                            <option value="पुत्र / Son">पुत्र / Son</option>
+                            <option value="पुत्री / Daughter">पुत्री / Daughter</option>
+                            <option value="माता / Mother">माता / Mother</option>
+                            <option value="पिता / Father">पिता / Father</option>
+                            <option value="भाई / Brother">भाई / Brother</option>
+                            <option value="बहन / Sister">बहन / Sister</option>
+                            <option value="other">अन्य / Other</option>
+                        </select>
+                        <input type="text" class="table-input other-rel-input save-field" placeholder="संबंध लिखें / Type Relationship" />
+                    </td>
+                    <td id="mergedInitialsCell" rowspan="2">
+                        <input type="text" class="table-input save-field" placeholder=" " />
+                    </td>
+                </tr>
+                <!-- Row 2 -->
+                <tr>
+                    <td>2</td>
+                    <td>
+                        <div class="name-container">
+                            <input type="text" class="table-input name-input-hi save-field" placeholder="सदस्य का नाम (हिंदी में)" />
+                            <input type="text" class="table-input save-field" style="text-transform: uppercase;" placeholder="Name (in English)" />
+                        </div>
+                    </td>
+                    <td><input type="text" class="date-picker-input save-field" style="width: 95%;" onfocus="activateDatePicker(this)" onblur="deactivateDatePicker(this)" placeholder="" /></td>
+                    <td>
+                        <select class="table-select save-field rel-select" data-empty="true" onchange="toggleOtherRelInput(this)">
+                            <option value="">-- चुनें / Select --</option>
+                            <option value="पत्नी / Wife">पत्नी / Wife</option>
+                            <option value="पति / Husband">पति / Husband</option>
+                            <option value="पुत्र / Son">पुत्र / Son</option>
+                            <option value="पुत्री / Daughter">पुत्री / Daughter</option>
+                            <option value="माता / Mother">माता / Mother</option>
+                            <option value="पिता / Father">पिता / Father</option>
+                            <option value="भाई / Brother">भाई / Brother</option>
+                            <option value="बहन / Sister">बहन / Sister</option>
+                            <option value="other">अन्य / Other</option>
+                        </select>
+                        <input type="text" class="table-input other-rel-input save-field" placeholder="संबंध लिखें / Type Relationship" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Undertaking Section -->
+        <div class="undertaking-text">
+            <div>(ख) मैं इसके द्वारा लेखा अधिकारी / कार्यालय अध्यक्ष को किसी भी बदलाव को सूचित करके उपरोक्त विवरण को अद्यतन रखने का वचन देता हूँ।</div>
+            <div style="font-style: normal; color: #333; margin-top: 1px;">
+                (b) I hereby undertake to keep the above particulars up to date by notifying the Accounts Officer / Head of Office of any changes.
+            </div>
+        </div>
+
+        <!-- Place, Date & Signature -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; font-size: 13px;">
+            <div>
+                <div style="margin-bottom: 8px;">
+                    <b>स्थान / Place :</b> <input type="text" id="place" class="fillable-red save-field" style="width: 150px;" placeholder="स्थान का नाम" />
+                </div>
+                <div>
+                    <b>दिनांक / Dated :</b> <input type="text" id="form_date" class="date-picker-input save-field" style="width: 150px;" onfocus="activateDatePicker(this)" onblur="deactivateDatePicker(this)" placeholder="" />
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <div><b>सरकारी सेवक के हस्ताक्षर</b></div>
+                <div style="font-style: italic; font-size: 11px;">Signature of Govt. Servant</div>
+            </div>
+        </div>
+
+        <!-- Footer Note Section -->
+        <div class="note-box">
+            <b>*इस प्रयोजन के लिए कुटुंब का अर्थ है / Family for this purpose means :-</b><br />
+            (क) पुरुष सरकारी सेवक के मामले में पत्नी। / <i>(a) Wife in the case of male Govt. Servant.</i><br />
+            (ख) महिला सरकारी सेवक के मामले में पति। / <i>(b) Husband in the case of female Govt. Servant.</i><br />
+            (ग) 18 वर्ष से कम आयु के पुत्र तथा 21 वर्ष से कम आयु की अविवाहित/पुनर्विवाहित पुत्रियाँ (सेवा-निवृत्ति से पूर्व कानूनी रूप से गोद लिए गए पुत्र या पुत्री सहित)।<br />
+            <i style="margin-left: 15px;">(c) Sons below 21 years of age and unmarried/remarried Daughters below 24 years of age including such son or daughter adopted legally before retirement.</i><br />
+            <b>टिप्पणी :-</b> पत्नी और पति में क्रमशः न्यायिक रूप से पृथक पत्नी और पति शामिल होंगे। <br>
+            <b>Note:</b> Wife and Husband shall include respectively judicially separated wife and husband.
+        </div>
+
+        <div class="page-badge no-print">A4 Layout Page</div>
+    </div>
+</form>
+
+<script>
+    function activateDatePicker(input) {
+        input.type = 'date';
+        if (typeof input.showPicker === 'function') {
+            input.showPicker();
+        }
+    }
+
+    function deactivateDatePicker(input) {
+        if (!input.value) {
+            input.type = 'text';
+        }
+    }
+
+    function toggleOtherRelInput(selectElement) {
+        var cell = selectElement.parentElement;
+        var otherInput = cell.querySelector('.other-rel-input');
+        
+        // यदि कोई वैल्यू सेलेक्ट नहीं की है
+        if (selectElement.value === '') {
+            selectElement.setAttribute('data-empty', 'true');
+        } else {
+            selectElement.removeAttribute('data-empty');
+        }
+
+        if (selectElement.value === 'other') {
+            otherInput.style.display = 'block';
+            selectElement.classList.add('hide-on-print');
+        } else {
+            otherInput.style.display = 'none';
+            selectElement.classList.remove('hide-on-print');
+            otherInput.value = '';
+        }
+        saveFormData();
+    }
+
+    function updateRowNumbersAndMerge() {
+        var tbody = document.getElementById("familyTbody");
+        var rows = tbody.getElementsByTagName("tr");
+        var totalRows = rows.length;
+
+        for (var i = 0; i < totalRows; i++) {
+            rows[i].cells[0].innerText = i + 1;
+        }
+
+        var mergedCell = document.getElementById("mergedInitialsCell");
+        if (mergedCell) {
+            mergedCell.rowSpan = totalRows;
+        }
+    }
+
+    function addFamilyRow() {
+        var tbody = document.getElementById("familyTbody");
+        var rowCount = tbody.rows.length;
+        var row = tbody.insertRow(rowCount);
+
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+        var cell4 = row.insertCell(3);
+
+        cell1.innerText = rowCount + 1;
+        cell2.innerHTML = '<div class="name-container">' +
+                          '<input type="text" class="table-input name-input-hi save-field" placeholder="सदस्य का नाम (हिंदी में)" />' +
+                          '<input type="text" class="table-input save-field" style="text-transform: uppercase;" placeholder="Name (in English)" />' +
+                          '</div>';
+        cell3.innerHTML = '<input type="text" class="date-picker-input save-field" style="width: 95%;" onfocus="activateDatePicker(this)" onblur="deactivateDatePicker(this)" placeholder="" />';
+        cell4.innerHTML = '<select class="table-select save-field rel-select" data-empty="true" onchange="toggleOtherRelInput(this)">' +
+                          '<option value="">-- चुनें / Select --</option>' +
+                          '<option value="पत्नी / Wife">पत्नी / Wife</option>' +
+                          '<option value="पति / Husband">पति / Husband</option>' +
+                          '<option value="पुत्र / Son">पुत्र / Son</option>' +
+                          '<option value="पुत्री / Daughter">पुत्री / Daughter</option>' +
+                          '<option value="माता / Mother">माता / Mother</option>' +
+                          '<option value="पिता / Father">पिता / Father</option>' +
+                          '<option value="भाई / Brother">भाई / Brother</option>' +
+                          '<option value="बहन / Sister">बहन / Sister</option>' +
+                          '<option value="other">अन्य / Other</option>' +
+                          '</select>' +
+                          '<input type="text" class="table-input other-rel-input save-field" placeholder="संबंध लिखें / Type Relationship" />';
+
+        updateRowNumbersAndMerge();
+        attachEventListeners();
+        saveFormData();
+    }
+
+    function removeFamilyRow() {
+        var tbody = document.getElementById("familyTbody");
+        var rowCount = tbody.rows.length;
+        if (rowCount > 1) {
+            tbody.deleteRow(rowCount - 1);
+            updateRowNumbersAndMerge();
+            saveFormData();
+        } else {
+            alert("कम से कम एक पंक्ति रहना अनिवार्य है! (At least 1 row is required)");
+        }
+    }
+
+    // Auto-Save and Restore Data Logic
+    function saveFormData() {
+        var inputs = document.querySelectorAll('.save-field');
+        var data = [];
+        inputs.forEach(function(input) {
+            data.push({
+                value: input.value,
+                type: input.type,
+                display: input.style.display,
+                isEmpty: input.hasAttribute('data-empty')
+            });
+        });
+        localStorage.setItem('form3_saved_data', JSON.stringify({
+            rowCount: document.getElementById("familyTbody").rows.length,
+            fields: data
+        }));
+    }
+
+    function loadFormData() {
+        var savedData = localStorage.getItem('form3_saved_data');
+        if (savedData) {
+            var parsed = JSON.parse(savedData);
+            
+            // Adjust rows
+            var currentRows = document.getElementById("familyTbody").rows.length;
+            while (currentRows < parsed.rowCount) {
+                addFamilyRow();
+                currentRows++;
+            }
+
+            var inputs = document.querySelectorAll('.save-field');
+            parsed.fields.forEach(function(item, index) {
+                if (inputs[index]) {
+                    inputs[index].value = item.value;
+                    if (item.display) {
+                        inputs[index].style.display = item.display;
+                    }
+                    if (item.value && item.type === 'date') {
+                        inputs[index].type = 'date';
+                    }
+                    if (item.isEmpty) {
+                        inputs[index].setAttribute('data-empty', 'true');
+                    } else {
+                        inputs[index].removeAttribute('data-empty');
+                    }
+                    if (inputs[index].classList.contains('rel-select') && item.value === 'other') {
+                        inputs[index].classList.add('hide-on-print');
+                    }
+                }
+            });
+        }
+    }
+
+    function attachEventListeners() {
+        var inputs = document.querySelectorAll('.save-field');
+        inputs.forEach(function(input) {
+            input.removeEventListener('input', saveFormData);
+            input.addEventListener('input', saveFormData);
+            input.removeEventListener('change', saveFormData);
+            input.addEventListener('change', saveFormData);
+        });
+    }
+
+    function resetForm() {
+        if (confirm("क्या आप सच में पूरा फॉर्म रीसेट करना चाहते हैं? (Are you sure you want to reset the form?)")) {
+            localStorage.removeItem('form3_saved_data');
+            location.reload();
+        }
+    }
+
+    window.onload = function() {
+        loadFormData();
+        attachEventListeners();
+    };
+</script>
+
+</body>
+</html>
