@@ -2,8 +2,10 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Viewport updated: Mobile zoom-in & zoom-out fully enabled -->
+    <meta name="viewport" content="width=device-width, initial-scale=0.4, minimum-scale=0.2, maximum-scale=3.0, user-scalable=yes">
     <title>Form 3 - Details of Family</title>
+    
     <!-- PWA Settings -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1b5e20">
@@ -37,22 +39,17 @@
             font-family: Arial, sans-serif;
         }
 
-        html, body {
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden; /* स्क्रीन से बाहर कंटेंट जाना रोकेगा */
-        }
-
         body {
             background-color: #5c7b9c;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-bottom: 20px;
+            padding: 0 0 20px 0;
+            margin: 0;
+            width: 100%;
         }
 
-        /* मुख्य हेडर (sitefrompdf) - प्रॉपर टॉप फिट */
+        /* मुख्य हेडर (sitefrompdf) - टॉप फिट */
         .site-header {
             width: 100%;
             background: linear-gradient(135deg, #1b5e20, #2e7d32);
@@ -89,11 +86,10 @@
             background: rgba(255, 255, 255, 0.35);
         }
 
-        /* A4 Page Container */
+        /* A4 Page Container fixed size for original form look */
         .a4-page {
             background-color: #ffffff;
             width: 210mm;
-            max-width: 100%; /* मोबाइल पर स्क्रीन चौड़ाई के बाहर नहीं जाएगा */
             min-height: 297mm;
             padding: 12mm 15mm 15mm 25mm;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -199,7 +195,6 @@
             gap: 5px;
             margin: 10px 0;
             justify-content: center;
-            flex-wrap: wrap;
         }
 
         .page-badge {
@@ -239,11 +234,6 @@
 
         .name-input-hi {
             border-bottom: 1px dashed #ccc;
-        }
-
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
         }
 
         .family-table {
@@ -297,35 +287,7 @@
             text-align: justify;
         }
 
-        /* Mobile Screens View Adjustment (स्क्रीन पर देखने के लिए) */
-        @media screen and (max-width: 768px) {
-            .a4-page {
-                width: 100% !important;
-                padding: 15px !important;
-                margin-bottom: 10px;
-            }
-
-            .site-header {
-                padding: 10px 15px;
-            }
-
-            .site-header h1 {
-                font-size: 16px;
-            }
-
-            .form-row {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .form-row input {
-                width: 100% !important;
-                margin-left: 0 !important;
-                margin-top: 3px;
-            }
-        }
-
-        /* PRINT STYLES (प्रिंट लेआउट में A4 फॉर्म फॉर्मेट) */
+        /* PRINT STYLES */
         @media print {
             @page {
                 size: A4 portrait;
@@ -341,7 +303,6 @@
             .a4-page {
                 box-shadow: none !important;
                 width: 210mm !important;
-                max-width: 210mm !important;
                 min-height: 297mm !important;
                 margin: 0 auto !important;
                 padding: 12mm 15mm 15mm 25mm !important;
@@ -377,7 +338,7 @@
     </style>
 </head>
 <body>
-    <!-- sitefrompdf Top Header -->
+    <!-- Header with no-print class -->
     <header class="site-header no-print">
         <h1>📋 sitefrompdf</h1>
         <a href="index.html" class="home-back-btn">&larr; होम पेज</a>
@@ -412,7 +373,7 @@
                     <span class="lbl-hi">2. दल संख्या / पद</span>
                     <span class="lbl-en">2. Regt. No / Designation</span>
                 </div>
-                <span style="font-weight:bold;">:</span>
+                <span style="font-weight:bold;">&nbsp;:</span>
                 <input type="text" id="designation" class="fillable-red save-field" style="flex: 1; text-transform: uppercase; margin-left: 5px;" placeholder="दल संख्या / पद (Regt. No / Designation)" />
             </div>
 
@@ -422,7 +383,7 @@
                     <span class="lbl-hi">3. जन्म तिथि</span>
                     <span class="lbl-en">3. Date of Birth</span>
                 </div>
-                <span style="font-weight:bold;">:</span>
+                <span style="font-weight:bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</span>
                 <input type="text" id="dob" class="date-picker-input save-field" style="width: 160px; margin-left: 5px;" onfocus="activateDatePicker(this)" onblur="deactivateDatePicker(this)" placeholder="" />
             </div>
 
@@ -432,7 +393,7 @@
                     <span class="lbl-hi">4. नियुक्ति की तारीख</span>
                     <span class="lbl-en">4. Date of Appointment</span>
                 </div>
-                <span style="font-weight:bold;">:</span>
+                <span style="font-weight:bold;">&nbsp;&nbsp;&nbsp;&nbsp;:</span>
                 <input type="text" id="doa" class="date-picker-input save-field" style="width: 160px; margin-left: 5px;" onfocus="activateDatePicker(this)" onblur="deactivateDatePicker(this)" placeholder="" />
             </div>
 
@@ -456,92 +417,90 @@
             <button type="button" class="btn-action btn-warning" onclick="resetForm()">🔄 रीसेट करें (Reset Form)</button>
         </div>
 
-        <!-- Family Table Responsive Wrap -->
-        <div class="table-responsive">
-            <table id="familyTable" class="family-table">
-                <thead>
-                    <tr>
-                        <th style="width: 8%;">
-                            <span class="lbl-hi">क्र. सं.</span>
-                            <span class="lbl-en">Sl. No.</span>
-                        </th>
-                        <th style="width: 37%;">
-                            <span class="lbl-hi">कुटुंब के सदस्य का नाम</span>
-                            <span class="lbl-en">Name of the member of family</span>
-                        </th>
-                        <th style="width: 18%;">
-                            <span class="lbl-hi">जन्म तिथि</span>
-                            <span class="lbl-en">Date of Birth</span>
-                        </th>
-                        <th style="width: 22%;">
-                            <span class="lbl-hi">सरकारी सेवक से संबंध</span>
-                            <span class="lbl-en">Relationship with Govt.</span>
-                        </th>
-                        <th style="width: 15%;">
-                            <span class="lbl-hi">कार्यालय अध्यक्ष के हस्ताक्षर </span>
-                            <span class="lbl-en">Initial of Head of Office</span>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody id="familyTbody">
-                    <!-- Row 1 -->
-                    <tr>
-                        <td>1</td>
-                        <td>
-                            <div class="name-container">
-                                <input type="text" class="table-input name-input-hi save-field" placeholder="सदस्य का नाम (हिंदी में)" />
-                                <input type="text" class="table-input save-field" style="text-transform: uppercase;" placeholder="Name (in English)" />
-                            </div>
-                        </td>
-                        <td><input type="text" class="date-picker-input save-field" style="width: 95%;" onfocus="activateDatePicker(this)" onblur="deactivateDatePicker(this)" placeholder="" /></td>
-                        <td>
-                            <select class="table-select save-field rel-select" data-empty="true" onchange="toggleOtherRelInput(this)">
-                                <option value="">-- चुनें / Select --</option>
-                                <option value="पत्नी / Wife">पत्नी / Wife</option>
-                                <option value="पति / Husband">पति / Husband</option>
-                                <option value="पुत्र / Son">पुत्र / Son</option>
-                                <option value="पुत्री / Daughter">पुत्री / Daughter</option>
-                                <option value="माता / Mother">माता / Mother</option>
-                                <option value="पिता / Father">पिता / Father</option>
-                                <option value="भाई / Brother">भाई / Brother</option>
-                                <option value="बहन / Sister">बहन / Sister</option>
-                                <option value="other">अन्य / Other</option>
-                            </select>
-                            <input type="text" class="table-input other-rel-input save-field" placeholder="संबंध लिखें / Type Relationship" />
-                        </td>
-                        <td id="mergedInitialsCell" rowspan="2">
-                            <input type="text" class="table-input save-field" placeholder=" " />
-                        </td>
-                    </tr>
-                    <!-- Row 2 -->
-                    <tr>
-                        <td>2</td>
-                        <td>
-                            <div class="name-container">
-                                <input type="text" class="table-input name-input-hi save-field" placeholder="सदस्य का नाम (हिंदी में)" />
-                                <input type="text" class="table-input save-field" style="text-transform: uppercase;" placeholder="Name (in English)" />
-                            </div>
-                        </td>
-                        <td><input type="text" class="date-picker-input save-field" style="width: 95%;" onfocus="activateDatePicker(this)" onblur="deactivateDatePicker(this)" placeholder="" /></td>
-                        <td>
-                            <select class="table-select save-field rel-select" data-empty="true" onchange="toggleOtherRelInput(this)">
-                                <option value="">-- चुनें / Select --</option>
-                                <option value="पत्नी / Wife">पत्नी / Wife</option>
-                                <option value="पति / Husband">पति / Husband</option>
-                                <option value="पुत्र / Son">पुत्र / Son</option>
-                                <option value="पुत्री / Daughter">पुत्री / Daughter</option>
-                                <option value="माता / Mother">माता / Mother</option>
-                                <option value="पिता / Father">पिता / Father</option>
-                                <option value="भाई / Brother">भाई / Brother</option>
-                                <option value="बहन / Sister">बहन / Sister</option>
-                                <option value="other">अन्य / Other</option>
-                            </select>
-                            <input type="text" class="table-input other-rel-input save-field" placeholder="संबंध लिखें / Type Relationship" />
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <!-- Family Table -->
+        <table id="familyTable" class="family-table">
+            <thead>
+                <tr>
+                    <th style="width: 8%;">
+                        <span class="lbl-hi">क्र. सं.</span>
+                        <span class="lbl-en">Sl. No.</span>
+                    </th>
+                    <th style="width: 37%;">
+                        <span class="lbl-hi">कुटुंब के सदस्य का नाम</span>
+                        <span class="lbl-en">Name of the member of family</span>
+                    </th>
+                    <th style="width: 18%;">
+                        <span class="lbl-hi">जन्म तिथि</span>
+                        <span class="lbl-en">Date of Birth</span>
+                    </th>
+                    <th style="width: 22%;">
+                        <span class="lbl-hi">सरकारी सेवक से संबंध</span>
+                        <span class="lbl-en">Relationship with Govt.</span>
+                    </th>
+                    <th style="width: 15%;">
+                        <span class="lbl-hi">कार्यालय अध्यक्ष के हस्ताक्षर </span>
+                        <span class="lbl-en">Initial of Head of Office</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="familyTbody">
+                <!-- Row 1 -->
+                <tr>
+                    <td>1</td>
+                    <td>
+                        <div class="name-container">
+                            <input type="text" class="table-input name-input-hi save-field" placeholder="सदस्य का नाम (हिंदी में)" />
+                            <input type="text" class="table-input save-field" style="text-transform: uppercase;" placeholder="Name (in English)" />
+                        </div>
+                    </td>
+                    <td><input type="text" class="date-picker-input save-field" style="width: 95%;" onfocus="activateDatePicker(this)" onblur="deactivateDatePicker(this)" placeholder="" /></td>
+                    <td>
+                        <select class="table-select save-field rel-select" data-empty="true" onchange="toggleOtherRelInput(this)">
+                            <option value="">-- चुनें / Select --</option>
+                            <option value="पत्नी / Wife">पत्नी / Wife</option>
+                            <option value="पति / Husband">पति / Husband</option>
+                            <option value="पुत्र / Son">पुत्र / Son</option>
+                            <option value="पुत्री / Daughter">पुत्री / Daughter</option>
+                            <option value="माता / Mother">माता / Mother</option>
+                            <option value="पिता / Father">पिता / Father</option>
+                            <option value="भाई / Brother">भाई / Brother</option>
+                            <option value="बहन / Sister">बहन / Sister</option>
+                            <option value="other">अन्य / Other</option>
+                        </select>
+                        <input type="text" class="table-input other-rel-input save-field" placeholder="संबंध लिखें / Type Relationship" />
+                    </td>
+                    <td id="mergedInitialsCell" rowspan="2">
+                        <input type="text" class="table-input save-field" placeholder=" " />
+                    </td>
+                </tr>
+                <!-- Row 2 -->
+                <tr>
+                    <td>2</td>
+                    <td>
+                        <div class="name-container">
+                            <input type="text" class="table-input name-input-hi save-field" placeholder="सदस्य का नाम (हिंदी में)" />
+                            <input type="text" class="table-input save-field" style="text-transform: uppercase;" placeholder="Name (in English)" />
+                        </div>
+                    </td>
+                    <td><input type="text" class="date-picker-input save-field" style="width: 95%;" onfocus="activateDatePicker(this)" onblur="deactivateDatePicker(this)" placeholder="" /></td>
+                    <td>
+                        <select class="table-select save-field rel-select" data-empty="true" onchange="toggleOtherRelInput(this)">
+                            <option value="">-- चुनें / Select --</option>
+                            <option value="पत्नी / Wife">पत्नी / Wife</option>
+                            <option value="पति / Husband">पति / Husband</option>
+                            <option value="पुत्र / Son">पुत्र / Son</option>
+                            <option value="पुत्री / Daughter">पुत्री / Daughter</option>
+                            <option value="माता / Mother">माता / Mother</option>
+                            <option value="पिता / Father">पिता / Father</option>
+                            <option value="भाई / Brother">भाई / Brother</option>
+                            <option value="बहन / Sister">बहन / Sister</option>
+                            <option value="other">अन्य / Other</option>
+                        </select>
+                        <input type="text" class="table-input other-rel-input save-field" placeholder="संबंध लिखें / Type Relationship" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
         <!-- Undertaking Section -->
         <div class="undertaking-text">
@@ -552,7 +511,7 @@
         </div>
 
         <!-- Place, Date & Signature -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; font-size: 13px; flex-wrap: wrap; gap: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; font-size: 13px;">
             <div>
                 <div style="margin-bottom: 8px;">
                     <b>स्थान / Place :</b> <input type="text" id="place" class="fillable-red save-field" style="width: 150px;" placeholder="स्थान का नाम" />
