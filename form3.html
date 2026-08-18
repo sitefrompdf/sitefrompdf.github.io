@@ -45,6 +45,38 @@
             margin: 0;
             overflow-x: hidden;
         }
+         /* मुख्य हेडर (sitefrompdf) और होम बटन */
+    .site-header {
+      background: linear-gradient(135deg, #1b5e20, #2e7d32);
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .site-header h1 {
+      font-size: 18px;
+      margin: 0;
+      font-weight: 700;
+    }
+    .home-back-btn {
+      color: white;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .home-back-btn:hover {
+      background: rgba(255, 255, 255, 0.35);
+    }
+
 
         /* A4 Page Container */
         .a4-page {
