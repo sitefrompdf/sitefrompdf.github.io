@@ -1,7 +1,7 @@
 {
-  "name": "Forms Portal",
+  "name": "Govt Forms Portal",
   "short_name": "FormsPortal",
-  "start_url": "./index.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#f4f6f9",
   "theme_color": "#1b5e20",
@@ -19,25 +19,17 @@
   ],
   "screenshots": [
     {
-      "src": "images/mobile-ss1.jpeg",
-      "sizes": "587x1280",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Select Form List View"
+      "src": "images/desktop-ss.png",
+      "sizes": "325x704",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Desktop View of Govt Forms Portal"
     },
     {
-      "src": "images/mobile-ss2.jpeg",
-      "sizes": "587x1280",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Form 3 Details View"
-    },
-    {
-      "src": "images/mobile-ss3.jpeg",
-      "sizes": "587x1280",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "CEA Certificate View"
+      "src": "images/mobile-ss.png",
+      "sizes": "325x704",
+      "type": "image/png",
+      "label": "Mobile View of Govt Forms Portal"
     }
   ]
 }
