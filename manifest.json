@@ -19,16 +19,10 @@
   ],
   "screenshots": [
     {
-      "src": "images/desktop-ss.png",
-      "sizes": "325x704",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Desktop View of Govt Forms Portal"
-    },
-    {
       "src": "images/mobile-ss.png",
       "sizes": "325x704",
       "type": "image/png",
+      "form_factor": "narrow",
       "label": "Mobile View of Govt Forms Portal"
     }
   ]
