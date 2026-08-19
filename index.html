@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="Tour TA, Transfer TA, LTC और CEA जैसे सरकारी फ़ॉर्म्स ऑनलाइन ऑटो-कैलकुलेट करें या मुफ़्त में ख़ाली PDF डाउनलोड करें।" />
-<meta name="keywords" content="TA Form, Tour TA, Transfer TA, LTC Claim, CEA Form, Govt Forms PDF" />
   <title>TA FORM - यात्रा भत्ता एवं अन्य सरकारी फ़ॉर्म</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Tour TA, Transfer TA, LTC और CEA फ़ॉर्म्स ऑनलाइन ऑटो-कैलकुलेट करें या खाली PDF मुफ़्त डाउनलोड करें।" />
+  <meta name="keywords" content="TA Form, Tour TA, Transfer TA, LTC Claim, CEA Form, Govt Forms PDF" />
+  <meta name="author" content="sitefrompdf" />
 
   <!-- Open Graph / WhatsApp Link Preview Meta Tags -->
   <meta property="og:type" content="website" />
@@ -134,6 +137,43 @@
     }
 
     .theme-toggle-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Install Banner Style */
+    .install-banner {
+      display: none;
+      background: var(--card-bg);
+      border: 1px solid var(--primary-light);
+      padding: 12px 16px;
+      margin: 15px auto 0 auto;
+      max-width: 1200px;
+      width: calc(100% - 30px);
+      border-radius: 10px;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .install-banner-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .install-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 12px;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .install-btn:active {
       transform: scale(0.95);
     }
 
@@ -379,24 +419,6 @@
       font-size: 14px;
     }
 
-    .form-card.disabled {
-      opacity: 0.65;
-      border-left-color: #adb5bd;
-      cursor: not-allowed;
-    }
-
-    .coming-soon-badge {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: var(--border-color);
-      color: var(--text-muted);
-      font-size: 10px;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-weight: 600;
-    }
-
     .no-result-msg {
       grid-column: 1 / -1;
       text-align: center;
@@ -414,9 +436,9 @@
       font-size: 13px;
     }
     body.dark-mode footer {
-  background: #0a0a0a;
-  border-top: 1px solid var(--border-color);
-}
+      background: #0a0a0a;
+      border-top: 1px solid var(--border-color);
+    }
 
     @media (min-width: 768px) {
       .hero { padding: 40px 20px; }
@@ -441,6 +463,18 @@
       🌙 डार्क मोड
     </button>
   </header>
+
+  <!-- PWA Install Banner -->
+  <div id="pwaInstallBanner" class="install-banner">
+    <div class="install-banner-left">
+      <span style="font-size: 24px;">📲</span>
+      <div>
+        <div style="font-weight: bold; font-size: 14px; color: var(--primary-light);">ऐप इंस्टॉल करें</div>
+        <div style="font-size: 11px; color: var(--text-muted);">बिना इंटरनेट भी फ़ॉर्म आसानी से एक्सेस करें</div>
+      </div>
+    </div>
+    <button id="pwaInstallBtn" class="install-btn">Install ⬇️</button>
+  </div>
 
   <!-- Hero Section -->
   <section class="hero">
@@ -510,7 +544,7 @@
 
   <!-- Search Filter -->
   <div class="search-container">
-    <input type="text" id="searchInput" class="search-input" placeholder="🔍 ऑनलाइन फ़ॉर्म का नाम खोजें..." onkeyup="filterForms()">
+    <input type="search" id="searchInput" class="search-input" placeholder="🔍 ऑनलाइन फ़ॉर्म का नाम खोजें..." aria-label="फ़ॉर्म खोजें" onkeyup="filterForms()">
   </div>
 
   <!-- Forms Selection Section -->
@@ -579,7 +613,7 @@
         </div>
       </a>
 
-      <!-- 5. FORM NO 3 (Fixed Tag Here) -->
+      <!-- 5. FORM NO 3 -->
       <a href="form3.html" class="form-card">
         <div>
           <div class="card-header">
@@ -592,7 +626,7 @@
           <span>ऑनलाइन भरें</span>
           <span>➔</span>
         </div>
-      </a> <!-- ✅ सही टैग </a> इस्तेमाल किया गया -->
+      </a>
 
     </div>
   </main>
@@ -605,6 +639,7 @@
       <a href="terms.html" style="color: #4caf50; text-decoration: none; margin-left: 15px;">Terms & Conditions</a>
     </div>
   </footer> 
+
   <!-- Scripts -->
   <script>
     // Dark Mode Toggle Script
@@ -623,14 +658,48 @@
       }
     }
 
-    // Restore Theme State on Load
+    // Restore Theme State on Load (System Preference Support Added)
     window.addEventListener('DOMContentLoaded', () => {
       const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       const btn = document.getElementById('themeToggleBtn');
 
-      if (savedTheme === 'dark') {
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
         document.body.classList.add('dark-mode');
         if (btn) btn.innerHTML = '☀️ लाइट मोड';
+      }
+    });
+
+    // PWA Direct Install Logic
+    let deferredPrompt;
+    const installBanner = document.getElementById('pwaInstallBanner');
+    const installBtn = document.getElementById('pwaInstallBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (installBanner) {
+        installBanner.style.display = 'flex';
+      }
+    });
+
+    if (installBtn) {
+      installBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          if (outcome === 'accepted') {
+            console.log('App installed successfully');
+          }
+          deferredPrompt = null;
+          installBanner.style.display = 'none';
+        }
+      });
+    }
+
+    window.addEventListener('appinstalled', () => {
+      if (installBanner) {
+        installBanner.style.display = 'none';
       }
     });
 
