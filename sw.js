@@ -1,4 +1,4 @@
-const CACHE_NAME = 'forms-portal-v1'; // अपडेट करने पर v1 को v2 करें
+const CACHE_NAME = 'forms-portal-v1'; // जब भी अपडेट करें, v1 को v2, v3 करें
 
 const urlsToCache = [
   './',
@@ -18,7 +18,7 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
-      .then(() => self.skipWaiting()) // तुरंत एक्टिव करने के लिए
+      .then(() => self.skipWaiting()) // नए वर्ज़न को तुरंत एक्टिवेट करने के लिए
   );
 });
 
@@ -29,24 +29,37 @@ self.addEventListener('activate', event => {
       return Promise.all(
         cacheNames.map(cache => {
           if (cache !== CACHE_NAME) {
+            console.log('Old cache deleted:', cache);
             return caches.delete(cache);
           }
         })
       );
-    }).then(() => self.clients.claim())
+    }).then(() => self.clients.claim()) // सभी खुले पेजों पर तुरंत नया वर्ज़न लागू करें
   );
 });
 
-// Fetch Event - कैश से फाइलें देना
+// Fetch Event - Network-First Strategy (नया अपडेट तुरंत दिखाने के लिए)
 self.addEventListener('fetch', event => {
+  // केवल GET रिक्वेस्ट्स को हैंडल करें
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        return response || fetch(event.request);
+    fetch(event.request)
+      .then(networkResponse => {
+        // अगर नेटवर्क से नई फ़ाइल मिल जाए, तो कैश को भी अपडेट कर दें
+        if (networkResponse && networkResponse.status === 200) {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseClone);
+          });
+        }
+        return networkResponse;
       })
       .catch(() => {
-        // यदि इंटरनेट बंद है और फाइल भी कैश में नहीं है
-        return caches.match('./index.html');
+        // इंटरनेट बंद होने पर कैश से फ़ाइल लोड करें
+        return caches.match(event.request).then(cachedResponse => {
+          return cachedResponse || caches.match('./index.html');
+        });
       })
   );
 });
