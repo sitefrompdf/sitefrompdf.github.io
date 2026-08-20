@@ -1,4 +1,4 @@
-const CACHE_NAME = 'forms-portal-v1'; // जब भी अपडेट करें, v1 को v2, v3 करें
+const CACHE_NAME = 'forms-portal-v2'; // जब भी अपडेट करें, v1 को v2, v3 करें
 
 const urlsToCache = [
   './',
