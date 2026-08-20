@@ -640,102 +640,85 @@
     </div>
   </footer> 
 
-  <!-- Scripts -->
-  <script>
-    // Dark Mode Toggle Script
-    function toggleTheme() {
-      const body = document.body;
-      const btn = document.getElementById('themeToggleBtn');
+ <!-- Scripts -->
+<script>
+  // Dark Mode Toggle Script (केवल वर्तमान पेज के लिए)
+  function toggleTheme() {
+    const body = document.body;
+    const btn = document.getElementById('themeToggleBtn');
 
-      body.classList.toggle('dark-mode');
+    body.classList.toggle('dark-mode');
 
-      if (body.classList.contains('dark-mode')) {
-        btn.innerHTML = '☀️ लाइट मोड';
-        localStorage.setItem('theme', 'dark');
-      } else {
-        btn.innerHTML = '🌙 डार्क मोड';
-        localStorage.setItem('theme', 'light');
-      }
+    if (body.classList.contains('dark-mode')) {
+      btn.innerHTML = '☀️ लाइट मोड';
+    } else {
+      btn.innerHTML = '🌙 डार्क मोड';
     }
+  }
 
-    // Restore Theme State on Load (System Preference Support Added)
-    window.addEventListener('DOMContentLoaded', () => {
-      const savedTheme = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const btn = document.getElementById('themeToggleBtn');
+  // PWA Direct Install Logic
+  let deferredPrompt;
+  const installBanner = document.getElementById('pwaInstallBanner');
+  const installBtn = document.getElementById('pwaInstallBtn');
 
-      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-        document.body.classList.add('dark-mode');
-        if (btn) btn.innerHTML = '☀️ लाइट मोड';
-      }
-    });
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (installBanner) {
+      installBanner.style.display = 'flex';
+    }
+  });
 
-    // PWA Direct Install Logic
-    let deferredPrompt;
-    const installBanner = document.getElementById('pwaInstallBanner');
-    const installBtn = document.getElementById('pwaInstallBtn');
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      if (installBanner) {
-        installBanner.style.display = 'flex';
-      }
-    });
-
-    if (installBtn) {
-      installBtn.addEventListener('click', async () => {
-        if (deferredPrompt) {
-          deferredPrompt.prompt();
-          const { outcome } = await deferredPrompt.userChoice;
-          if (outcome === 'accepted') {
-            console.log('App installed successfully');
-          }
-          deferredPrompt = null;
-          installBanner.style.display = 'none';
+  if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          console.log('App installed successfully');
         }
-      });
-    }
-
-    window.addEventListener('appinstalled', () => {
-      if (installBanner) {
+        deferredPrompt = null;
         installBanner.style.display = 'none';
       }
     });
+  }
 
-    // Smart Search Filter Script with "No Result" Message
-    function filterForms() {
-      const input = document.getElementById('searchInput').value.toLowerCase();
-      const cards = document.getElementsByClassName('form-card');
-      const formsGrid = document.getElementById('formsGrid');
-      let visibleCount = 0;
-
-      Array.from(cards).forEach(card => {
-        const title = card.querySelector('.card-title').innerText.toLowerCase();
-        const desc = card.querySelector('.card-desc').innerText.toLowerCase();
-
-        if (title.includes(input) || desc.includes(input)) {
-          card.style.display = "flex";
-          visibleCount++;
-        } else {
-          card.style.display = "none";
-        }
-      });
-
-      // Handle "No Result Found" message dynamically
-      let noResultMsg = document.getElementById('noResultMsg');
-      if (visibleCount === 0) {
-        if (!noResultMsg) {
-          noResultMsg = document.createElement('div');
-          noResultMsg.id = 'noResultMsg';
-          noResultMsg.className = 'no-result-msg';
-          noResultMsg.innerHTML = '❌ आपके द्वारा खोजा गया फ़ॉर्म नहीं मिला।';
-          formsGrid.appendChild(noResultMsg);
-        }
-      } else if (noResultMsg) {
-        noResultMsg.remove();
-      }
+  window.addEventListener('appinstalled', () => {
+    if (installBanner) {
+      installBanner.style.display = 'none';
     }
-  </script>
-</body>
-</html>
+  });
+
+  // Smart Search Filter Script
+  function filterForms() {
+    const input = document.getElementById('searchInput').value.toLowerCase();
+    const cards = document.getElementsByClassName('form-card');
+    const formsGrid = document.getElementById('formsGrid');
+    let visibleCount = 0;
+
+    Array.from(cards).forEach(card => {
+      const title = card.querySelector('.card-title').innerText.toLowerCase();
+      const desc = card.querySelector('.card-desc').innerText.toLowerCase();
+
+      if (title.includes(input) || desc.includes(input)) {
+        card.style.display = "flex";
+        visibleCount++;
+      } else {
+        card.style.display = "none";
+      }
+    });
+
+    let noResultMsg = document.getElementById('noResultMsg');
+    if (visibleCount === 0) {
+      if (!noResultMsg) {
+        noResultMsg = document.createElement('div');
+        noResultMsg.id = 'noResultMsg';
+        noResultMsg.className = 'no-result-msg';
+        noResultMsg.innerHTML = '❌ आपके द्वारा खोजा गया फ़ॉर्म नहीं मिला।';
+        formsGrid.appendChild(noResultMsg);
+      }
+    } else if (noResultMsg) {
+      noResultMsg.remove();
+    }
+  }
+</script>
