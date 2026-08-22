@@ -345,11 +345,18 @@
             border: 1px solid #000;
             padding: 6px 4px;
             vertical-align: top;
+            word-wrap: break-word;
+            word-break: break-word;
+            white-space: pre-wrap;
+            min-height: 30px;
+            text-align: left;
+            outline: none;
         }
 
         .nominee-table th {
             background-color: #ffffff;
             font-weight: bold;
+            text-align: center;
         }
 
         .footer-signatures {
@@ -611,7 +618,7 @@
                 (क) पुरुष सरकारी सेवक के मामले में पत्नी। / <i>(a) Wife in the case of male Govt. Servant.</i><br />
                 (ख) महिला सरकारी सेवक के मामले में पति। / <i>(b) Husband in the case of female Govt. Servant.</i><br />
                 (ग) 18 वर्ष से कम आयु के पुत्र तथा 21 वर्ष से कम आयु की अविवाहित/पुनर्विवाहित पुत्रियाँ (सेवा-निवृत्ति से पूर्व कानूनी रूप से गोद लिए गए पुत्र या पुत्री सहित)।<br />
-                <i style="margin-left: 15px;">(c) Sons below 21 years of age and unmarried/remarried Daughters below 24 years of age including such son or daughter adopted legally before retirement.</i><br />
+                <i style="margin-left: 15px;">(c) Sons below 18 years of age and unmarried/remarried Daughters below 21 years of age including such son or daughter adopted legally before retirement.</i><br />
                 <b>टिप्पणी :-</b> पत्नी और पति में क्रमशः न्यायिक रूप से पृथक पत्नी और पति शामिल होंगे। <br>
                 <b>Note:</b> Wife and Husband shall include respectively judicially separated wife and husband.
             </div>
@@ -654,12 +661,13 @@
                 </thead>
                 <tbody id="tbody1">
                     <tr>
-                        <td><input type="text" class="table-input save-field" /></td>
-                        <td><input type="text" class="table-input save-field" /></td>
-                        <td><input type="text" class="table-input save-field" /></td>
-                        <td><input type="text" class="table-input save-field" /></td>
-                        <td><input type="text" class="table-input save-field" /></td>
-                        <td><input type="text" class="table-input save-field" /></td>
+                        <!-- CONTENTEDITABLE CELL APPLIED -->
+                        <td contenteditable="true" class="save-field"></td>
+                        <td contenteditable="true" class="save-field"></td>
+                        <td contenteditable="true" class="save-field"></td>
+                        <td contenteditable="true" class="save-field"></td>
+                        <td contenteditable="true" class="save-field"></td>
+                        <td contenteditable="true" class="save-field"></td>
                     </tr>
                 </tbody>
             </table>
@@ -733,12 +741,13 @@
                 </thead>
                 <tbody id="tbody2">
                     <tr>
-                        <td><input type="text" class="table-input save-field" /></td>
-                        <td><input type="text" class="table-input save-field" /></td>
-                        <td><input type="text" class="table-input save-field" /></td>
-                        <td><input type="text" class="table-input save-field" /></td>
-                        <td><input type="text" class="table-input save-field" /></td>
-                        <td><input type="text" class="table-input save-field" /></td>
+                        <!-- CONTENTEDITABLE CELL APPLIED -->
+                        <td contenteditable="true" class="save-field"></td>
+                        <td contenteditable="true" class="save-field"></td>
+                        <td contenteditable="true" class="save-field"></td>
+                        <td contenteditable="true" class="save-field"></td>
+                        <td contenteditable="true" class="save-field"></td>
+                        <td contenteditable="true" class="save-field"></td>
                     </tr>
                 </tbody>
             </table>
@@ -809,12 +818,13 @@
                 </thead>
                 <tbody id="tbody3">
                     <tr>
-                        <td><input type="text" class="table-input save-field" /></td>
-                        <td><input type="text" class="table-input save-field" /></td>
-                        <td><input type="text" class="table-input save-field" /></td>
-                        <td><input type="text" class="table-input save-field" /></td>
-                        <td><input type="text" class="table-input save-field" /></td>
-                        <td><input type="text" class="table-input save-field" /></td>
+                        <!-- CONTENTEDITABLE CELL APPLIED -->
+                        <td contenteditable="true" class="save-field"></td>
+                        <td contenteditable="true" class="save-field"></td>
+                        <td contenteditable="true" class="save-field"></td>
+                        <td contenteditable="true" class="save-field"></td>
+                        <td contenteditable="true" class="save-field"></td>
+                        <td contenteditable="true" class="save-field"></td>
                     </tr>
                 </tbody>
             </table>
@@ -960,7 +970,8 @@
             var row = tbody.insertRow();
             for (var i = 0; i < 6; i++) {
                 var cell = row.insertCell(i);
-                cell.innerHTML = '<input type="text" class="table-input save-field" />';
+                cell.contentEditable = "true";
+                cell.className = "save-field";
             }
             attachEventListeners();
             saveAllFormData();
@@ -981,9 +992,10 @@
             var inputs = document.querySelectorAll('.save-field');
             var data = [];
             inputs.forEach(function(input) {
+                var val = (input.isContentEditable) ? input.innerText : input.value;
                 data.push({
-                    value: input.value,
-                    type: input.type,
+                    value: val,
+                    type: input.type || 'editable',
                     display: input.style.display,
                     isEmpty: input.hasAttribute('data-empty')
                 });
@@ -1015,7 +1027,11 @@
                 var inputs = document.querySelectorAll('.save-field');
                 parsed.fields.forEach(function(item, index) {
                     if (inputs[index]) {
-                        inputs[index].value = item.value;
+                        if (inputs[index].isContentEditable) {
+                            inputs[index].innerText = item.value || '';
+                        } else {
+                            inputs[index].value = item.value || '';
+                        }
                         if (item.display) {
                             inputs[index].style.display = item.display;
                         }
@@ -1027,7 +1043,7 @@
                         } else {
                             inputs[index].removeAttribute('data-empty');
                         }
-                        if (inputs[index].classList.contains('rel-select') && item.value === 'other') {
+                        if (inputs[index].classList && inputs[index].classList.contains('rel-select') && item.value === 'other') {
                             inputs[index].classList.add('hide-on-print');
                         }
                     }
@@ -1042,6 +1058,8 @@
                 input.addEventListener('input', saveAllFormData);
                 input.removeEventListener('change', saveAllFormData);
                 input.addEventListener('change', saveAllFormData);
+                input.removeEventListener('keyup', saveAllFormData);
+                input.addEventListener('keyup', saveAllFormData);
             });
         }
 
