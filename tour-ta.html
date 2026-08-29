@@ -180,71 +180,6 @@
     .col-halt     { width: 8%; }
     .col-purpose  { width: 7%; }
 
-    /* Date-time picker cell */
-    .date-cell {
-      position: relative;
-      padding: 0 !important;
-      cursor: pointer;
-      text-align: center;
-    }
-    .dt-display {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2px 1px;
-      min-height: 28px;
-      line-height: 1.2;
-      color: #222;
-      user-select: none;
-      pointer-events: none;
-    }
-    .dt-display.empty {
-      color: #aaa;
-      font-style: italic;
-      font-size: 10px;
-    }
-    .dt-date {
-      display: block;
-      font-size: 11px;
-      font-weight: 600;
-      width: 100%;
-      text-align: center;
-      border-bottom: 0.8px solid #555;
-      padding-bottom: 2px;
-      margin-bottom: 2px;
-    }
-    .dt-time {
-      display: block;
-      font-size: 11px;
-      width: 100%;
-      text-align: center;
-    }
-    .dt-display .cal-icon {
-      display: block;
-      font-size: 14px;
-      line-height: 1;
-      margin-bottom: 1px;
-    }
-    .dt-input {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      cursor: pointer;
-      border: none !important;
-      background: transparent;
-      color: transparent;
-      caret-color: transparent;
-    }
-    .dt-input::-webkit-calendar-picker-indicator {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      margin: 0; padding: 0;
-      opacity: 0;
-      cursor: pointer;
-    }
-
     #cell-4-9 {
       writing-mode: vertical-rl; 
       transform: rotate(180deg); 
@@ -308,6 +243,12 @@
         border-bottom: 1px dotted #000 !important;
       }
 
+      /* खाली वाले सेल का प्लेसहोल्डर प्रिंट में पूरी तरह छुपाएं */
+      [contenteditable]:empty::before {
+        content: "" !important;
+        display: none !important;
+      }
+
       .a4-image-page {
         page-break-before: always !important;
         break-before: page !important;
@@ -340,14 +281,6 @@
 
       #customTable thead {
         display: table-header-group !important;
-      }
-
-      .dt-input { display: none !important; }
-      .dt-display { color: #000 !important; font-style: normal !important; }
-      .dt-display.empty { display: none !important; }
-
-      [contenteditable]:empty::before {
-        content: "" !important;
       }
     }
   </style>
@@ -390,7 +323,7 @@
       </p>
       <ul style="font-size: 14px; line-height: 1.6; padding-left: 20px; margin-bottom: 20px;">
         <li>सभी संबंधित फ़ील्ड्स (जैसे नाम, वेतन, पद, तिथि और समय) सावधानी से भरें।</li>
-        <li>यात्रा विवरण तालिका में तारीख और समय कैलेंडर/पिकर से चुनें।</li>
+        <li>तारीख और 24-घंटे का समय अपनी मर्जी से लिखें (उदा: 29/08/2026 14:30)।</li>
         <li>किराया (Fare) डालते ही 'कुल योग' ऑटोमैटिक अपडेट हो जाता है।</li>
         <li>विवरण भरने के बाद <strong>'PDF डाउनलोड'</strong> बटन पर क्लिक करें।</li>
       </ul>
@@ -517,9 +450,9 @@
           </th>
         </tr>
         <tr>
-          <th rowspan="2">तारीख और<br>समय</th>
+          <th rowspan="2">तारीख और<br>समय (24 Hrs)</th>
           <th rowspan="2">कहा से</th>
-          <th rowspan="2">तारीख और<br>समय</th>
+          <th rowspan="2">तारीख और<br>समय (24 Hrs)</th>
           <th rowspan="2">कहा तक</th>
         </tr>
         <tr>
@@ -530,15 +463,9 @@
 
       <tbody id="tableBody">
         <tr id="initial-travel-row" data-row-type="travel">
-          <td class="date-cell">
-            <span class="dt-display empty"><span class="cal-icon">📅</span>तारीख/समय</span>
-            <input type="datetime-local" class="dt-input" title="प्रस्थान तारीख और समय चुनें">
-          </td>
+          <td contenteditable="true" data-placeholder="तारीख व समय (24 Hrs)"></td>
           <td contenteditable="true" data-placeholder="स्थान (From)"></td>
-          <td class="date-cell">
-            <span class="dt-display empty"><span class="cal-icon">📅</span>तारीख/समय</span>
-            <input type="datetime-local" class="dt-input" title="आगमन तारीख और समय चुनें">
-          </td>
+          <td contenteditable="true" data-placeholder="तारीख व समय (24 Hrs)"></td>
           <td contenteditable="true" data-placeholder="स्थान (To)"></td>
           <td contenteditable="true" data-placeholder="Mode"></td>
           <td contenteditable="true" colspan="2" data-placeholder="₹" inputmode="decimal"></td>
@@ -575,7 +502,6 @@
 <script>
   const SAVE_KEY      = 'ta-bill-draft';
   const RECENT_KEY    = 'ta-bill-recent';
-  const MM_TO_PX      = 3.779527559;
 
   const table         = document.getElementById('customTable');
   const tableBody     = document.getElementById('tableBody');
@@ -583,17 +509,11 @@
   const a4Page        = document.getElementById('a4Page');
   const saveStatus    = document.getElementById('saveStatus');
 
-  const DATE_CELL_HTML = (title) =>
-    `<td class="date-cell">` +
-      `<span class="dt-display empty"><span class="cal-icon">📅</span>तारीख/समय</span>` +
-      `<input type="datetime-local" class="dt-input" title="${title}">` +
-    `</td>`;
-
   const travelRowHTML = () =>
     `<tr data-deletable="true" data-row-type="travel">` +
-      DATE_CELL_HTML('प्रस्थान तारीख और समय') +
+      `<td contenteditable="true" data-placeholder="तारीख व समय (24 Hrs)"></td>` +
       `<td contenteditable="true" data-placeholder="स्थान (From)"></td>` +
-      DATE_CELL_HTML('आगमन तारीख और समय') +
+      `<td contenteditable="true" data-placeholder="तारीख व समय (24 Hrs)"></td>` +
       `<td contenteditable="true" data-placeholder="स्थान (To)"></td>` +
       `<td contenteditable="true" data-placeholder="Mode/Class"></td>` +
       `<td contenteditable="true" colspan="2" data-placeholder="₹" inputmode="decimal"></td>` +
@@ -619,7 +539,6 @@
   function updatePurposeRowspan() {
     const purposeCell = document.getElementById('cell-4-9');
     if (purposeCell) {
-      // केवल यात्रा और हॉल्ट पंक्तियों को गिनें (Total Row को छोड़ कर)
       const validRows = tableBody.querySelectorAll('tr[data-row-type="travel"], tr[data-row-type="halt"]').length;
       purposeCell.rowSpan = Math.max(1, validRows);
     }
@@ -628,47 +547,6 @@
   function updateLayout() {
     updatePurposeRowspan();
   }
-
-  function formatDT(isoVal) {
-    const d = new Date(isoVal);
-    if (isNaN(d.getTime())) return null;
-    return {
-      date: ("0"+d.getDate()).slice(-2)+"."+("0"+(d.getMonth()+1)).slice(-2)+"."+d.getFullYear().toString().slice(-2),
-      time: ("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)
-    };
-  }
-
-  function localISOString(d) {
-    const p = n => String(n).padStart(2,'0');
-    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
-  }
-
-  function setDateLimits() {
-    const now        = new Date();
-    const oneYearAgo = new Date(now.getTime() - 365*24*60*60*1000);
-    const maxStr = localISOString(now);
-    const minStr = localISOString(oneYearAgo);
-    table.querySelectorAll('.dt-input').forEach(inp => { inp.min = minStr; inp.max = maxStr; });
-  }
-
-  table.addEventListener('click', function(e) {
-    const cell = e.target.closest('.date-cell');
-    if (!cell) return;
-    const inp = cell.querySelector('.dt-input');
-    if (!inp) return;
-    try { inp.showPicker(); } catch(err) { inp.click(); }
-  });
-
-  table.addEventListener('change', function(e) {
-    if (!e.target.classList.contains('dt-input') || !e.target.value) return;
-    const disp  = e.target.previousElementSibling;
-    const parts = formatDT(e.target.value);
-    if (parts && disp) {
-      disp.innerHTML = `<span class="dt-date">${parts.date}</span><span class="dt-time">${parts.time}</span>`;
-      disp.classList.remove('empty');
-    }
-    debouncedSave();
-  });
 
   function calculateTotal() {
     let total = 0;
@@ -717,7 +595,7 @@
   function saveFormData() {
     try {
       const state = { tableBodyHTML: tableBody.innerHTML, inputs: {} };
-      document.querySelectorAll('.a4-page input:not(.dt-input)').forEach(inp => {
+      document.querySelectorAll('.a4-page input').forEach(inp => {
         const k = inp.placeholder || inp.title || inp.id;
         if (k) state.inputs[k] = inp.value;
       });
@@ -751,7 +629,7 @@
         tableBody.querySelectorAll('td[data-placeholder="₹"]').forEach(restrictNumberInput);
       }
       if (state.inputs) {
-        document.querySelectorAll('.a4-page input:not(.dt-input)').forEach(inp => {
+        document.querySelectorAll('.a4-page input').forEach(inp => {
           const k = inp.placeholder || inp.title || inp.id;
           if (k && state.inputs[k] != null) inp.value = state.inputs[k];
         });
@@ -792,7 +670,6 @@
 
     const fareCell = newTr.querySelector('td[data-placeholder="₹"]');
     if (fareCell) restrictNumberInput(fareCell);
-    setDateLimits();
 
     updateLayout();
     updateLiveTotal();
@@ -846,15 +723,8 @@
     if (!confirm('क्या आप सभी भरा हुआ डेटा साफ करना चाहते हैं?\nयह कार्य पूर्ववत नहीं किया जा सकता।')) return;
 
     table.querySelectorAll('tr[data-deletable="true"], tr[data-row-type="total"]').forEach(r => r.remove());
-
-    table.querySelectorAll('.dt-input').forEach(inp => inp.value = '');
-    table.querySelectorAll('.dt-display').forEach(disp => {
-      disp.innerHTML = '<span class="cal-icon">📅</span>तारीख/समय';
-      disp.classList.add('empty');
-    });
-
     table.querySelectorAll('[contenteditable]').forEach(el => el.innerHTML = '');
-    document.querySelectorAll('.a4-page input:not(.dt-input)').forEach(inp => inp.value = '');
+    document.querySelectorAll('.a4-page input').forEach(inp => inp.value = '');
 
     localStorage.removeItem(SAVE_KEY);
     localStorage.removeItem(RECENT_KEY);
@@ -877,12 +747,10 @@
       modal.style.display = 'none';
       loadFormData();
       updateLayout();
-      setDateLimits();
       window.addEventListener('resize', updateLayout);
     });
 
     tableBody.querySelectorAll('td[data-placeholder="₹"]').forEach(restrictNumberInput);
-    setDateLimits();
   });
 </script>
 
