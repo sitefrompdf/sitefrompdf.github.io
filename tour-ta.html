@@ -95,7 +95,7 @@
     }
     .header-left { position: absolute; top: 6mm; left: 6mm; font-weight: normal; font-size: 14px; }
     .sub-bill-left { position: absolute; top: 10mm; left: 6mm; font-weight: normal; font-size: 14px; }
-    .header-center { position: absolute; top: 6mm; left: 52%; transform: translateX(-50%); font-weight: normal; font-size: 14px; }
+    .header-center { position: absolute; top: 6mm; left: 50%; transform: translateX(-50%); font-weight: normal; font-size: 14px; }
     .header-right { position: absolute; top: 6mm; right: 6mm; font-weight: normal; font-size: 14px; }
 
     /* Uniform dotted input style and Uppercase transformation */
@@ -111,9 +111,7 @@
     }
 
     #customTable {
-      position: relative;
-      top: 105mm;
-      left: 0;
+      margin-top: 105mm;
       border-collapse: collapse;
       width: 100%;
       table-layout: fixed;
@@ -121,7 +119,7 @@
 
     .action-buttons {
       position: relative; 
-      margin-top: 110mm;
+      margin-top: 5mm;
       left: 0;
       width: 100%; 
       padding: 5px 0;
@@ -271,83 +269,248 @@
       overflow: hidden;
     }
 
-    /* Print Styles */
+    /* Print Styles
+       Main screen layout is unchanged.
+       The form/table may continue onto additional A4 pages when needed.
+    */
     @media print {
+      @page {
+        size: A4 portrait;
+        margin: 5mm;
+      }
+
       html, body {
         height: auto !important;
+        min-height: 0 !important;
         overflow: visible !important;
-        background-color: white !important; 
+        background-color: white !important;
         margin: 0 !important;
         padding: 0 !important;
       }
 
-      .site-header, .action-buttons, footer, #instructionModal { 
-        display: none !important; 
+      .site-header,
+      .action-buttons,
+      footer,
+      #instructionModal {
+        display: none !important;
       }
 
+      /* Keep the existing form positions and dimensions.
+         Do not force the complete form into one physical sheet. */
       .a4-page {
         box-shadow: none !important;
         border: none !important;
         margin: 0 !important;
-        width: 100% !important;
+        width: 210mm !important;
         padding: 4mm !important;
-        min-height: auto !important;
+        min-height: 297mm !important;
         height: auto !important;
         position: relative !important;
         overflow: visible !important;
-        page-break-after: always !important;
-        break-after: page !important;
+
+        /* IMPORTANT: allow the table to continue onto the next sheet. */
+        page-break-after: auto !important;
+        break-after: auto !important;
       }
 
-      /* Hide placeholders and clear styling in print */
       input::placeholder {
         color: transparent !important;
       }
-      .a4-page input[type="text"], 
+
+      .a4-page input[type="text"],
       .a4-page input[type="number"] {
         border-bottom: 1px dotted #000 !important;
       }
 
-      .a4-image-page {
-        page-break-before: always !important;
-        break-before: page !important;
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-        width: 210mm !important;
-        height: 297mm !important;
-        margin: 0 !important;
-        background: white !important;
-        position: relative !important;
-      }
-
-      .a4-image-page img {
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: cover !important;
-      }
-
+      /* The table itself may flow across pages. */
       #customTable {
         width: 100% !important;
         table-layout: fixed !important;
         border-collapse: collapse !important;
-        position: relative !important;
-      }
-
-      #customTable tr {
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
+        page-break-inside: auto !important;
+        break-inside: auto !important;
+        overflow: visible !important;
       }
 
       #customTable thead {
         display: table-header-group !important;
       }
 
-      .dt-input { display: none !important; }
-      .dt-display { color: #000 !important; font-style: normal !important; }
-      .dt-display.empty { display: none !important; }
+      #customTable tbody {
+        display: table-row-group !important;
+        overflow: visible !important;
+      }
+
+      /* Never split an individual row. */
+      #customTable tr {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      /* Created only during printing when the table has many rows. */
+      #customTable .print-purpose-cell {
+        writing-mode: vertical-rl !important;
+        transform: rotate(180deg) !important;
+        text-align: left !important;
+        padding: 10px 5px !important;
+        vertical-align: middle !important;
+      }
+
+      #customTable .print-purpose-first-cell {
+        writing-mode: vertical-rl !important;
+        transform: rotate(180deg) !important;
+        text-align: left !important;
+        padding: 10px 5px !important;
+        vertical-align: middle !important;
+      }
+
+      #customTable .total-row {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      /* Temporary print-only purpose cells created by preparePurposeColumnForPrint().
+         They behave exactly like the original last column but are no longer
+         one huge rowspan, so Chrome can paginate the table safely. */
+      #customTable td.__print-purpose-cell {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        vertical-align: middle !important;
+        overflow: hidden !important;
+      }
+
+      /* Print-only continuation pages used when the travel table is longer than one A4 sheet. */
+      .print-continuation-page {
+        display: block !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        min-height: 297mm !important;
+        max-height: 297mm !important;
+        margin: 0 !important;
+        padding: 4mm !important;
+        box-sizing: border-box !important;
+        background: #fff !important;
+        position: relative !important;
+        overflow: hidden !important;
+        page-break-before: always !important;
+        break-before: page !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .ta-print-table {
+        width: 100% !important;
+        table-layout: fixed !important;
+        border-collapse: collapse !important;
+        margin-top: 105mm !important;
+      }
+
+      .print-continuation-page .ta-print-table {
+        margin-top: 0 !important;
+      }
+
+      .ta-print-table thead {
+        display: table-header-group !important;
+      }
+
+      .ta-print-table tbody {
+        display: table-row-group !important;
+      }
+
+      .ta-print-table th,
+      .ta-print-table td {
+        border: 0.5px solid black !important;
+        box-sizing: border-box !important;
+      }
+
+      .ta-print-table td {
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        word-break: break-all !important;
+        overflow: hidden !important;
+        height: auto !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+        padding: 3px !important;
+        line-height: 1.1 !important;
+        font-size: 12px !important;
+      }
+
+      .ta-print-table th {
+        font-size: 12px !important;
+        padding: 2px !important;
+      }
+
+      .ta-print-table tr {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .ta-print-purpose {
+        writing-mode: vertical-rl !important;
+        transform: rotate(180deg) !important;
+        text-align: left !important;
+        padding: 10px 5px !important;
+        vertical-align: middle !important;
+      }
+
+      .ta-print-table .total-row {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .ta-print-table .dt-input {
+        display: none !important;
+      }
+
+      .dt-input {
+        display: none !important;
+      }
+
+      .dt-display {
+        color: #000 !important;
+        font-style: normal !important;
+      }
+
+      .dt-display.empty {
+        display: none !important;
+      }
 
       [contenteditable]:empty::before {
         content: "" !important;
+      }
+
+      /* Every image is exactly one A4 sheet.
+         No page-break-before on every image, because that can create
+         unwanted blank sheets. */
+      .a4-image-page {
+        width: 210mm !important;
+        height: 297mm !important;
+        min-height: 297mm !important;
+        max-height: 297mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        position: relative !important;
+        overflow: hidden !important;
+
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+
+      /* First image starts on a fresh page after the complete form. */
+      .a4-image-page:first-of-type {
+        page-break-before: always !important;
+        break-before: page !important;
+      }
+
+      .a4-image-page img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        display: block !important;
       }
     }
   </style>
@@ -417,7 +580,7 @@
     <div style="position: absolute; top: 10mm; right: 6mm; font-weight: normal; font-size: 14px;">I.T.B.P.F Accts 001</div>
 
     <div class="header-center">
-      AC/NO - <input type="number" maxlength="18" inputmode="numeric" style="width: 180px; height: 18px; padding: 2px 5px;" placeholder="खाता संख्या " />
+      AC/NO - <input type="text" maxlength="18" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'');" style="width: 180px; height: 18px; padding: 2px 5px;" placeholder="खाता संख्या " />
     </div>
 
     <div style="position: absolute; top: 11mm; left: 50%; transform: translateX(-50%); font-weight: normal; font-size: 14px;">
@@ -470,12 +633,12 @@
       </div>
       <div style="position: absolute; top: 11mm; left: 0mm;line-height:0.8;">
         4.&nbsp;वेतन<br />&nbsp;&nbsp;&nbsp;PAY -
-        <input type="number" maxlength="10" inputmode="numeric" style="width: 110px; height: 18px; padding: 2px 5px;" placeholder="₹ 00000" />
+        <input type="text" maxlength="10" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'');" style="width: 110px; height: 18px; padding: 2px 5px;" placeholder="₹ 00000" />
       </div>
 
       <div style="position: absolute; top: 11mm;line-height:0.9; left: 50mm;">
         लेवल<br />LEVEL -
-        <input type="number" maxlength="2" inputmode="numeric" style="width: 60px; height: 18px; padding: 2px 5px;" placeholder="01-18" />
+        <input type="text" maxlength="2" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'');" style="width: 60px; height: 18px; padding: 2px 5px;" placeholder="01-18" />
       </div>
 
       <div style="position: absolute; top: 20mm; left: 0mm; width: 750px; font-weight: normal; font-size: 14px; display: flex; align-items: center;">
@@ -604,7 +767,7 @@
   const mergedRowHTML =
     `<tr data-deletable="true" data-row-type="halt">` +
       `<td colspan="9" contenteditable="true" ` +
-        `style="text-align:left;vertical-align:center;padding:2px;height:22px;" ` +
+        `style="text-align:left;vertical-align:middle;padding:2px;height:22px;" ` +
         `data-placeholder="विश्राम का स्थान और अवधि / Place and Duration of Halt">` +
       `</td>` +
     `</tr>`;
@@ -670,6 +833,13 @@
     debouncedSave();
   });
 
+  // contenteditable cells में rich-text paste रोकें — सिर्फ plain text आए
+  tableBody.addEventListener('paste', function(e) {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+    document.execCommand('insertText', false, text);
+  });
+
   function calculateTotal() {
     let total = 0;
     table.querySelectorAll('tr[data-row-type="travel"]').forEach(row => {
@@ -728,7 +898,7 @@
       localStorage.setItem(RECENT_KEY, JSON.stringify({
         lastSaved : Date.now(),
         form      : 'ta-bill',
-        path      : '/ta-bill.html',
+        path      : '/tour-ta.html',
         title     : 'यात्रा भत्ता बिल (TA Bill)',
         name      : nameEl ? nameEl.value.trim() : '',
         regNo     : regEl  ? regEl.value.trim()  : ''
@@ -863,8 +1033,270 @@
     updateLayout();
   });
 
+  /*
+   * PRINT PAGINATION FIX v3
+   * ------------------------
+   * The screen table keeps its original single merged purpose cell.
+   * For printing only, the table is rebuilt into A4-sized chunks.
+   * The first chunk gets the user's purpose text in ONE merged cell.
+   * Continuation chunks keep ONE merged purpose cell but leave it blank.
+   * Continuation chunks do not repeat the table header; rows continue directly.
+   */
+  let printPaginationState = null;
+
+  function buildPrintTable(rows, purposeHTML, purposeStyle, includeTotal, showPurpose = true, showHeader = true) {
+    const printTable = document.createElement('table');
+    printTable.className = 'ta-print-table';
+
+    // Keep the column geometry. The header is printed only on the first page.
+    const colgroup = table.querySelector('colgroup');
+    const thead = table.querySelector('thead');
+    if (colgroup) printTable.appendChild(colgroup.cloneNode(true));
+    if (showHeader && thead) printTable.appendChild(thead.cloneNode(true));
+
+    const tbody = document.createElement('tbody');
+
+    rows.forEach((sourceRow, index) => {
+      const row = sourceRow.cloneNode(true);
+
+      // The original purpose cell is removed from every cloned row.
+      row.querySelectorAll('#cell-4-9').forEach(cell => cell.remove());
+
+      if (index === 0) {
+        const purposeCell = document.createElement('td');
+        purposeCell.className = 'ta-print-purpose';
+        // User-entered purpose is shown only on the FIRST printed page.
+        // Continuation pages keep the same merged last column, but it is blank.
+        purposeCell.innerHTML = showPurpose ? purposeHTML : '';
+        if (purposeStyle !== null) purposeCell.setAttribute('style', purposeStyle);
+        purposeCell.rowSpan = rows.length;
+        tbodyAppendPurposeCell(row, purposeCell);
+      }
+
+      tbody.appendChild(row);
+    });
+
+    if (includeTotal) {
+      const totalRow = tableBody.querySelector('tr[data-row-type="total"]');
+      if (totalRow) tbody.appendChild(totalRow.cloneNode(true));
+    }
+
+    printTable.appendChild(tbody);
+    return printTable;
+  }
+
+  function tbodyAppendPurposeCell(row, purposeCell) {
+    // All normal travel rows have 9 visible columns before the purpose cell;
+    // halt rows use colspan=9. Appending the merged purpose cell restores the
+    // same 10-column table geometry as the original.
+    row.appendChild(purposeCell);
+  }
+
+  function getDataRowsForPrint() {
+    return Array.from(tableBody.querySelectorAll(
+      'tr[data-row-type="travel"], tr[data-row-type="halt"]'
+    ));
+  }
+
+  function createMeasurementTable(dataRows) {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = [
+      'position:absolute',
+      'left:-100000px',
+      'top:0',
+      'width:210mm',
+      'visibility:hidden',
+      'pointer-events:none'
+    ].join(';');
+
+    // The real print rules live inside @media print, but this measurement is
+    // performed before window.print(). Apply the same table rules here so the
+    // measured row/header heights match the printed table.
+    const style = document.createElement('style');
+    style.textContent = `
+      .ta-print-measure {
+        width: 100% !important;
+        table-layout: fixed !important;
+        border-collapse: collapse !important;
+        margin: 0 !important;
+      }
+      .ta-print-measure th, .ta-print-measure td {
+        border: 0.5px solid black !important;
+        box-sizing: border-box !important;
+      }
+      .ta-print-measure td {
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        word-break: break-all !important;
+        overflow: hidden !important;
+        height: auto !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+        padding: 3px !important;
+        line-height: 1.1 !important;
+        font-size: 12px !important;
+      }
+      .ta-print-measure th {
+        font-size: 12px !important;
+        padding: 2px !important;
+      }
+      .ta-print-measure .dt-input { display: none !important; }
+    `;
+    wrap.appendChild(style);
+
+    const measure = buildPrintTable(dataRows, '', 'vertical-align:middle;', false);
+    measure.classList.add('ta-print-measure');
+    measure.style.marginTop = '0';
+    wrap.appendChild(measure);
+    document.body.appendChild(wrap);
+
+    return { wrap, table: measure };
+  }
+
+  function getRowHeights(dataRows) {
+    const measurement = createMeasurementTable(dataRows);
+    const rows = Array.from(measurement.table.querySelectorAll('tbody > tr'));
+    const heights = rows.map(row => row.getBoundingClientRect().height);
+    measurement.wrap.remove();
+    return heights;
+  }
+
+  function splitRowsIntoPages(dataRows, rowHeights, firstAvailable, continuationAvailable, headerHeight) {
+    const pages = [];
+    let index = 0;
+
+    while (index < dataRows.length) {
+      const available = pages.length === 0 ? firstAvailable : continuationAvailable;
+      let used = headerHeight;
+      let end = index;
+
+      while (end < dataRows.length) {
+        const h = rowHeights[end] || 0;
+        // Always place at least one row on a page, even if an unusually tall
+        // row is larger than the nominal remaining height.
+        if (end > index && used + h > available) break;
+        used += h;
+        end++;
+      }
+
+      pages.push(dataRows.slice(index, end));
+      index = end;
+    }
+
+    return pages;
+  }
+
+  function preparePrintPagination() {
+    if (printPaginationState) return;
+
+    const dataRows = getDataRowsForPrint();
+    const purpose = document.getElementById('cell-4-9');
+    if (!purpose || dataRows.length === 0) return;
+
+    // Measure the current table position before replacing it. This keeps the
+    // first printed chunk exactly where the existing table starts on screen.
+    const pageRect = a4Page.getBoundingClientRect();
+    const tableRect = table.getBoundingClientRect();
+    const pagePx = 297 * MM_TO_PX;
+    const firstTableTop = tableRect.top - pageRect.top;
+    const firstBottomPadding = 4 * MM_TO_PX;
+    const firstAvailable = Math.max(30, pagePx - firstTableTop - firstBottomPadding);
+    const continuationAvailable = Math.max(30, pagePx - 8 * MM_TO_PX);
+
+    // Header height is measured from a small header-only print table.
+    const headerMeasure = createMeasurementTable([]);
+    const headerHeight = headerMeasure.table.querySelector('thead')
+      ? headerMeasure.table.querySelector('thead').getBoundingClientRect().height
+      : 0;
+    headerMeasure.wrap.remove();
+
+    const rowHeights = getRowHeights(dataRows);
+
+    // If all rows fit on the first sheet, leave the original table completely
+    // untouched. This is important for the user's normal one-page print.
+    const allRowsHeight = headerHeight + rowHeights.reduce((a, b) => a + b, 0);
+    const totalRow = tableBody.querySelector('tr[data-row-type="total"]');
+    const totalHeight = totalRow ? totalRow.getBoundingClientRect().height : 0;
+    if (allRowsHeight + totalHeight <= firstAvailable) return;
+
+    const rowPages = splitRowsIntoPages(
+      dataRows,
+      rowHeights,
+      firstAvailable,
+      continuationAvailable,
+      headerHeight
+    );
+
+    const purposeHTML = purpose.innerHTML;
+    const purposeStyle = purpose.getAttribute('style');
+    const totalExists = !!totalRow;
+
+    printPaginationState = {
+      originalTable: table,
+      originalDisplay: table.style.display,
+      originalNextSibling: table.nextSibling,
+      continuationPages: [],
+      purposeHTML,
+      purposeStyle
+    };
+
+    // First chunk replaces the original table in exactly the same location.
+    const firstChunk = buildPrintTable(
+      rowPages[0],
+      purposeHTML,
+      purposeStyle,
+      rowPages.length === 1 && totalExists,
+      true,  // show the entered purpose only on the first printed page
+      true   // first page keeps the original table header
+    );
+    firstChunk.classList.add('ta-print-first-table');
+    table.style.display = 'none';
+    table.parentNode.insertBefore(firstChunk, table);
+
+    // Remaining chunks get their own full A4 continuation sheet. Each has a
+    // single purpose cell merged only over the rows on that sheet.
+    for (let i = 1; i < rowPages.length; i++) {
+      const page = document.createElement('div');
+      page.className = 'print-continuation-page';
+
+      const chunkTable = buildPrintTable(
+        rowPages[i],
+        purposeHTML,
+        purposeStyle,
+        i === rowPages.length - 1 && totalExists,
+        false, // blank merged purpose column on continuation pages
+        false  // NO header on continuation pages; rows start directly
+      );
+      page.appendChild(chunkTable);
+      a4Page.parentNode.insertBefore(page, a4Page.nextSibling);
+      printPaginationState.continuationPages.push(page);
+    }
+
+    // If there was a total row but only the first chunk contains the end of
+    // the table, it is already included above. No other screen DOM is changed.
+  }
+
+  function restorePrintPagination() {
+    if (!printPaginationState) return;
+
+    const state = printPaginationState;
+
+    document.querySelectorAll('.ta-print-first-table').forEach(el => el.remove());
+    state.continuationPages.forEach(page => page.remove());
+
+    state.originalTable.style.display = state.originalDisplay;
+    updatePurposeRowspan();
+    updateLayout();
+
+    printPaginationState = null;
+  }
+
+  window.addEventListener('beforeprint', preparePrintPagination);
+  window.addEventListener('afterprint', restorePrintPagination);
+
   document.getElementById('downloadPdf').addEventListener('click', function() {
     saveFormData();
+    preparePrintPagination();
     window.print();
   });
 
