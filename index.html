@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>नई साइट पर जाएँ - sitefrompdf</title>
+  <meta name="description" content="sitefrompdf की साइट अब नए पते siteformspdf.in पर है। Tour TA, Transfer TA, LTC, CEA फ़ॉर्म वहीं भरें।" />
+  <link rel="canonical" href="https://siteformspdf.in/" />
+  <meta name="theme-color" content="#1b5e20" />
+  <noscript><meta http-equiv="refresh" content="5;url=https://siteformspdf.in/" /></noscript>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    body { background: #f8f9fa; color: #212529; min-height: 100vh; display: flex; flex-direction: column; }
+    header { background: linear-gradient(135deg, #1b5e20, #2e7d32); color: #fff; padding: 16px 20px; font-size: 20px; font-weight: 700; }
+    main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px 15px; }
+    .card { background: #fff; border: 1px solid #e9ecef; border-left: 5px solid #4caf50; border-radius: 12px; padding: 26px 22px; max-width: 460px; width: 100%; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+    .icon { font-size: 44px; margin-bottom: 10px; }
+    h1 { font-size: 22px; color: #1b5e20; margin-bottom: 10px; }
+    p { font-size: 15px; line-height: 1.6; color: #495057; margin-bottom: 14px; }
+    .btn { display: inline-block; background: #1b5e20; color: #fff; text-decoration: none; font-weight: 700; font-size: 16px; padding: 13px 26px; border-radius: 28px; margin: 6px 0 14px; }
+    .url { font-weight: 700; color: #1b5e20; word-break: break-all; }
+    .note { font-size: 13px; color: #6c757d; margin: 0; }
+    .app { display: none; text-align: left; background: #fff3e0; border: 2px solid #ffb74d; border-radius: 12px; padding: 14px; margin: 4px 0 16px; }
+    .app > b { display: block; color: #e65100; font-size: 16px; margin-bottom: 6px; }
+    .app ol { padding-left: 20px; font-size: 14.5px; line-height: 1.6; color: #37474f; }
+    .app .chrome { display: block; text-align: center; background: #e65100; color: #fff; text-decoration: none; font-weight: 700; border-radius: 22px; padding: 11px; margin-top: 10px; }
+    footer { text-align: center; padding: 16px; background: #1a1a1a; color: #aaa; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <header>📋 sitefrompdf</header>
+  <main>
+    <div class="card">
+      <div class="icon">📢</div>
+      <h1>हमारी साइट नए पते पर आ गई है</h1>
+      <p>Tour TA, Transfer TA, LTC, CEA और Form No. 3 अब यहाँ उपलब्ध हैं:</p>
+      <p class="url">siteformspdf.in</p>
+      <div class="app" id="oldApp">
+        <b>🔔 आप पुराना ऐप (FormsPortal) इस्तेमाल कर रहे हैं</b>
+        <ol>
+          <li>नीचे वाले बटन से <span id="brName">Chrome</span> में <b>siteformspdf.in</b> खोलें</li>
+          <li>वहाँ नीचे आई पट्टी में <b>"जोड़ें"</b> या <b>"कैसे?"</b> दबाएँ</li>
+          <li>फिर इस पुराने ऐप के आइकन को दबाकर रखें → <b>हटाएँ</b></li>
+        </ol>
+        <a class="chrome" id="chromeBtn" href="https://siteformspdf.in/?from=gh">🌐 Chrome में नया ऐप लें</a>
+      </div>
+      <a id="goBtn" class="btn" href="https://siteformspdf.in/">नई साइट खोलें ➔</a>
+      <p class="note" id="countdownNote">कुछ सेकंड में आप अपने-आप वहीं पहुँच जाएँगे।</p>
+    </div>
+  </main>
+  <footer>© 2026 sitefrompdf</footer>
+
+  <script>
+    // पुराना पेज (जैसे /tour-ta.html) खोला हो तो नई साइट पर उसी पेज पर भेजें, वरना होम पेज पर
+    (function () {
+      var NEW_ORIGIN = 'https://siteformspdf.in';
+      var path = location.pathname;
+      if (path === '/index.html') path = '/';
+      // नई साइट को बताएँ कि यूजर पुराने पते से आया है (ऐप जोड़ने की पट्टी के लिए)
+      var q = location.search ? location.search + '&from=gh' : '?from=gh';
+      var target = NEW_ORIGIN + path + q + location.hash;
+      document.getElementById('goBtn').href = target;
+      // पुराना ऐप (होम स्क्रीन वाला) खुला है? तो नया ऐप लेने का तरीका दिखाएँ और पढ़ने का समय दें
+      var isApp = false;
+      try { isApp = matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches || navigator.standalone === true; } catch (e) {}
+      var left = 5;
+      if (isApp) {
+        left = 20;
+        document.getElementById('oldApp').style.display = 'block';
+        var cb = document.getElementById('chromeBtn');
+        if (/Android/i.test(navigator.userAgent)) cb.href = 'intent://siteformspdf.in/?from=gh#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent('https://siteformspdf.in/?from=gh') + ';end';
+        else { cb.textContent = '🌐 Safari में siteformspdf.in खोलें'; document.getElementById('brName').textContent = 'Safari'; }
+      }
+      var note = document.getElementById('countdownNote');
+      var timer = setInterval(function () {
+        left--;
+        if (left <= 0) {
+          clearInterval(timer);
+          location.replace(target);
+        } else {
+          note.textContent = left + ' सेकंड में आप अपने-आप नई साइट पर पहुँच जाएँगे।';
+        }
+      }, 1000);
+      note.textContent = left + ' सेकंड में आप अपने-आप नई साइट पर पहुँच जाएँगे।';
+    })();
+    // पुराना service worker (offline कॉपी) हटाएँ, ताकि पुराना ऐप हमेशा यह नया संदेश दिखाए
+    try {
+      if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(function (rs) { rs.forEach(function (r) { r.unregister(); }); });
+      if (window.caches) caches.keys().then(function (ks) { ks.forEach(function (k) { caches.delete(k); }); });
+    } catch (e) {}
+  </script>
+</body>
+</html>
